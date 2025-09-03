@@ -8,8 +8,30 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'JSUX',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
-			sidebar: [ ],
+			favicon: '/favicon.ico',
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/dbwebb-jsux/dbwebb-jsux.github.io' }
+			],
+			sidebar: [
+				{ label: 'Kursöversikt', link: '/' },
+				{
+					label: "Kursmoment",
+					items: [
+						'kmom/kmom01',
+						'kmom/kmom02',
+						'kmom/kmom03',
+						'kmom/kmom04',
+						'kmom/kmom05',
+						'kmom/kmom06',
+						'kmom/kmom10',
+					]
+				}
+			],
+			customCss: [
+				// Relative path to your custom CSS file
+				'./src/styles/custom.css',
+			],
+			pagination: false,
 		}),
 	],
 });
