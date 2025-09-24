@@ -10,3 +10,7 @@
 .site-title {
     color: #f0dc54;
 }
+
+lite-youtube {
+    max-width: 100% !important;
+}
