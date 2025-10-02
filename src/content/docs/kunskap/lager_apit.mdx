@@ -1,0 +1,27 @@
+---
+title: Lager API:t
+description: Vi skaffar oss en API-nyckel och kopierar produkter till din webbshop
+---
+
+Vi kommer under kursens gång använda [Lager-API:t](https://lager.emilfolino.se) för att hantera våra produkter och längre fram för att lägga ordrar.
+
+### En API-nyckel
+
+Vi börjar med att skaffa en API-nyckel via [https://lager.emilfolino.se/v2/auth/api_key](https://lager.emilfolino.se/v2/auth/api_key). Där fyller du i din e-post och klickar i rutan för att acceptera villkoren. Du bör sedan få upp en vy med en nyckel, håll kvar den i webbläsaren så skapar vi en fil i webshop-repot där vi kan spara undan den.
+
+```shell
+# stå i dbwebb-kurser/jsux/webshop
+mkdir -p models
+touch models/auth.js
+code .
+```
+
+Nu bör Visual Studio Code öppnas och vi kan då skapa ett objekt, som vi exporterar som `default` från modulen.
+
+```javascript
+const auth = {
+    api_key: "DIN API NYCKEL",
+};
+
+export default auth;
+```
