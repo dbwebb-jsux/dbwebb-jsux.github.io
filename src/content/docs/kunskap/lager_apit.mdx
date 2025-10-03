@@ -3,9 +3,12 @@ title: Lager API:t
 description: Vi skaffar oss en API-nyckel och kopierar produkter till din webbshop
 ---
 
-Vi kommer under kursens gång använda [Lager-API:t](https://lager.emilfolino.se) för att hantera våra produkter och längre fram för att lägga ordrar.
+import { Image } from 'astro:assets';
+import postman from "../../../assets/postman_download.png";
 
-### En API-nyckel
+Vi kommer under kursens gång använda [Lager-API:t](https://lager.emilfolino.se) för att hantera våra produkter och längre fram för att lägga ordrar. I Lager-API:t har du ett eget lager kopplat till din unika API-nyckel. Den data du har där är din egen, så du kan ändra och till och med ta bort data utan att det påverkar andra studenter.
+
+## En API-nyckel
 
 Vi börjar med att skaffa en API-nyckel via [https://lager.emilfolino.se/v2/auth/api_key](https://lager.emilfolino.se/v2/auth/api_key). Där fyller du i din e-post och klickar i rutan för att acceptera villkoren. Du bör sedan få upp en vy med en nyckel, håll kvar den i webbläsaren så skapar vi en fil i webshop-repot där vi kan spara undan den.
 
@@ -19,9 +22,29 @@ code .
 Nu bör Visual Studio Code öppnas och vi kan då skapa ett objekt, som vi exporterar som `default` från modulen.
 
 ```javascript
+// stå i models/auth.js
 const auth = {
     api_key: "DIN API NYCKEL",
+    api_url: "https://lager.emilfolino.se/v2",
 };
 
 export default auth;
 ```
+
+Vi kommer titta på `import` och `export` senare i kursen och hur vi kan använda det för att exportera och importera moduler mellan JavaScript filer. Just nu använder vi det för att ha ett centralt ställe att hämta API-nyckeln och en URL till API:t ifrån.
+
+
+
+## Kopiera produkter
+
+För att vi alla ska ha samma uppsättning produkter (musikalbum) att utgå ifrån ska vi nu kopiera över produkter till ert egna lager. Vi gör detta med en POST-request till `https://lager.emilfolino.se/v2/copier/products`. För att kunna skicka en POST-request på ett smidigt sätt och utforska API:t installerar vi Postman.
+
+### Installera Postman
+
+Gå till webbplatsen [https://www.postman.com/](https://www.postman.com/) och tryck på knappen under rubriken "Download the desktop app for" som matchar ditt operativsystem.
+
+<Image src={postman} alt="Postman Download" />
+
+När du har installerat appen får du upp ett val om att skapa ett konto. Om du har ett konto får du ett antal fördelar som att kunna spara undan requests och lite annat, men det är inget krav att skapa ett konto.
+
+I videon nedan visar Emil hur du kan använda Postman och hur vi kan kopiera produkterna så vi har något att utgå ifrån.
