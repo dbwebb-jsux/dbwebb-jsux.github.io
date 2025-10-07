@@ -15,6 +15,12 @@ Vi ska nu börja bygga en webbshop och vi börjar utifrån [exemplen i kapitel 2
 
 
 
+## Förkunskaper
+
+Du bör ha jobbat igenom övningen [Lager API:t](../kunskap/lager_apit) där du har skaffat dig en API-nyckel och skapat filen `models/auth.js`.
+
+
+
 ## Grundläggande struktur
 
 Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här vill vi ha ett `header`, ett `hero`, ett `main` och ett `footer`-element. Ersätt `body`-delen i den befintliga koden i `index.html` i ditt kursrepo så att det ser ut som nedan.
@@ -87,7 +93,127 @@ För `main` elementet med klassen `container` lägger vi till attributet `flex: 
 
 
 
-### En Hero-bild
+## En Hero-bild
 
-Nu fortsätter vi med vår design och lägger in en stor bild precis under headern som sätter tonen för vår webbshop. Jag skapade bilden med en AI-tjänst, men går bra att använda bilder som ni själv har skapat.
+Nu fortsätter vi med vår design och lägger in en stor bild precis under headern som sätter tonen för vår webbshop. Jag laddade ner en bild från bildtjänsten [Unsplash](https://unsplash.com/), men går lika bra at skapa bilden med en AI-tjänst eller att använda bilder som ni själv har skapat.
 
+Jag har sparat filen som `assets/hero-banner.jpg` och lagt till detta i `index.html`.
+
+```html
+<div class="hero">
+    <img src="assets/hero-banner.jpg" alt="hero banner showing records" />
+</div>
+```
+
+Om vi laddar om sidan fyller bilden säkert upp en stor del av sidan och bryter förmodligen hela designen. Då bilder består av ett faktiskt antal pixlar och inte som till exempel text kan radbrytas eller liknande ser vi till att lägga in en generell regel för bilder i vår `style.css`.
+
+```css
+img {
+    max-width: 100%;
+}
+```
+
+
+
+## Produktlistning
+
+Som ett passande avslut på denna övning ska vi skriva lite JavaScript för att skapa en produktlistning av musiken i vår webbshop. Vi börjar med att skapa ett element i `main` i `index.html` så `main` ser ut som nedan.
+
+```html
+<main class="container">
+    <h1>webshoppen</h1>
+    <div class="product-list" id="product-list"></div>
+</main>
+```
+
+Notera att vi har lagt till både en klass och ett id. Vi kommer i kursen använda klasser för att tilldela stil till elementen och id för att koppla oss mot element i JavaScript koden.
+
+Vi skapar nu filen `main.js` och lägger till den i `head`-elementet i `index-html`. Vi kommer inledningsvis enbart ha en JavaScript (precis som att vi just nu bara har en CSS-fil), men kommer senare i kursen skapa lite bättre struktur.
+
+Notera nedan att `script` taggen har attributet `type` satt till `module` och att den laddas med `defer`, som säkerställer att hela HTML sidan laddats innan vi kör vårt JavaScript.
+
+```html
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="main.js" type="module" defer></script>
+</head>
+```
+
+I `main.js` börjar vi med att importera `auth`-objektet, som vi exporterade från filen `models/auth.js` i övningen [Lager API:t](../kunskap/lager_apit). Vi skapar sedan en funktion `renderProducts`, som vi sedan anropar. I funktionen använder vi `document.getElementById` för att koppla oss mot `#product-list` elementet som vi skapade i `index.html`.
+
+```javascript
+import auth from "./models/auth.js";
+
+function renderProducts() {
+    const productList = document.getElementById("product-list");
+
+}
+
+renderProducts();
+```
+
+Vi vill nu utnyttja `auth`-objektet och hämta data från API:t. Först sätter vi att `renderProducts` ska vara en `async`-funktion så vi kan använda `async/await` tillsammans med `fetch`.
+
+Sedan anropar vi `fetch` med URL'n och API-nyckeln från Lager API:t och gör om så att svaret vi får blir gjort om till ett JavaScript objekt med hjälp av `json()`-funktionen från Response objektet.
+
+```javascript
+import auth from "./models/auth.js";
+
+async function renderProducts() {
+    const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`);
+    const result = await response.json();
+    const productList = document.getElementById("product-list");
+
+    console.log(result);
+}
+
+renderProducts();
+```
+
+Om du laddar om din webbshop i webbläsaren bör du nu få en utskrift av de produkter, som finns kopplade till din API-nyckel i webbläsarens konsol. Det som finns kvar nu är alltså att lägga till element i `#product-list`-elementet. Vi använder oss av `Array.prototype.map`-funktionen ([MDN dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)) för att skapa en array med HTML-strängar. Sedan använder vi `Array.prototype.join`-funktionen ([MDN dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)) för att slå ihop allt till en stor sträng som vi sätter som `innerHTML` för `productList` elementet.
+
+```javascript
+import auth from "./models/auth.js";
+
+async function renderProducts() {
+    const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`);
+    const result = await response.json();
+    const productList = document.getElementById("product-list");
+
+    const productArray = result.data.map((product) => {
+        return `<div class="product">
+    <img src="${product.image_url}" alt="Album art ${product.name}" />
+    <h3>${product.name}</h3>        
+</div>`;
+    });
+
+    productList.innerHTML = productArray.join("\n");
+}
+
+renderProducts();
+```
+
+Om du laddar om sidan bör du kunna se stora bilder och några rubriker. Jag la till följande i min `style.css` för att få ner bildern lite i storlek och placera bild och text bredvid varann istället.
+
+```css
+.product {
+    display: flex;
+    flex-direction: row;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+}
+
+.product img {
+    width: 20%;
+}
+
+h3 {
+    font-size: 2.4em;
+    margin-bottom: 1.75rem;
+}
+```
