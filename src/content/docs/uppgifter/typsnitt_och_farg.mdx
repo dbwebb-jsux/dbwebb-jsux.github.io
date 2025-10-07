@@ -1,0 +1,102 @@
+---
+title: Typsnitt och färg
+description: Kravspecifikation för analys kmom01
+---
+
+Vi kommer igenom kursen ta ett analytiskt perspektiv på verklig webbplats design utifrån temat från kursen: Att bygga en webbshop. Vi börjar med två viktiga faktorer för att sätta stämningen för en webbplats Typsnitt och Färg.
+
+
+
+## Skapa rapportfilen
+
+Skapa en struktur för din rapport, det kommer fler sådana här uppgifter.
+
+```bash
+# Stå i kursrepot
+touch reports/kmom01.md
+```
+
+
+
+## Färgpalett i markdown dokument
+
+När du dokumenterar en färgpalett så kan du lägga den direkt i dokumentet via HTML-kod. Ungefär så här, i en tabell till exempel.
+
+```html
+<table style="border-spacing: 4px; border-collapse: separate">
+<tr>
+<td style="height: 50px; width: 50px; background-color: #ef0"></td>
+<td style="height: 50px; width: 50px; background-color: #0ef"></td>
+<td style="height: 50px; width: 50px; background-color: #f0e"></td>
+</tr>
+</table>
+```
+
+Du kan skriva ovan HTML-kod rakt in i ett markdown-dokument och följande kommer att visas.
+
+<table style="border-spacing: 4px; border-collapse: separate">
+<tr>
+<td style="height: 50px; width: 50px; background-color: #ef0"></td>
+<td style="height: 50px; width: 50px; background-color: #0ef"></td>
+<td style="height: 50px; width: 50px; background-color: #f0e"></td>
+</tr>
+</table>
+
+Du kan förenkla koden om du lägger in visst stöd i form av klasser i din stylesheet.
+
+
+
+## Rapportstruktur
+
+När du skriver din rapport så kan du följa denna rubrikstruktur. Det är en struktur som är vanligt använd i rapportsammanhang (och i ditt kommande examensarbete).
+
+```text
+Titel på rapporten
+=======================
+
+Skriv en eller två rader om vad uppgiften handlar om.
+
+Urval
+-----------------------
+
+Berätta vilken webbplats du valt att undersöka och varför eller hur du gick tillväga när du gjorde ditt urval.
+
+Metod
+-----------------------
+
+Berätta kort om din "metod", hur du gör för att utföra undersökningen. Berätta om du använder något speciellt verktyg.
+
+Resultat
+-----------------------
+
+Dokumentera dina resultat från din studie. Berätta vad du kom fram till, vilka resultat du hittade och observerade.
+
+Analys
+-----------------------
+
+Diskutera och analysera de resultaten du fann.
+
+Referenser
+-----------------------
+
+Ange de eventuella referenser du använder dig av, om några.
+```
+
+Strukturen är inte absolut nödvändig, se den som en möjlighet att träna på god struktur av rapportskrivning.
+
+
+
+Krav
+-----------------------
+
+1. Välj ut 1 webbshop som skall analyseras, berätta hur du gjorde urvalet (urval). Tänk att ditt urval påverkar vad du kan komma fram till i din rapport. Gör ditt urval från en kategori av webbplatser, eller välj helt olika kategorier för att jämföra. Tänk på att vi i kommande kmom kommer analysera den valda webbshoppen utifrån andra olika perspektiv.
+
+1. Berätta om du använda något särskilt verktyg för att göra färganalysen (metod).
+
+1. För webbplatsen, gör följande (resultat):
+    1. Ta en snapshot (bild) på webbplatsen.
+    1. Dokumentera och visualisera färgpaletten som används.
+    1. Notera val av typsnitt för H1-H3 samt brödtext, kommentera om det är serif eller sans-serif.
+    1. Notera i en mening om du anser att webbplatsens färgval och typografi motsvarar den profil du tror att webbplatsen vill ha.
+
+1. Skriv ett stycke om dina samlade intryck från resultatet, finns det något värt att nämna, diskutera, att analysera (analys), fick du fram något bra med din studie?

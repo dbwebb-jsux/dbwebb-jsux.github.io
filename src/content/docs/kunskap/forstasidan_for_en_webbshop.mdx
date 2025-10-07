@@ -4,4 +4,90 @@ description: Vi tar en titt på design för webbshoppar och hur vi kan skapa bra
 ---
 
 import { Image } from 'astro:assets';
-import postman from "../../../assets/postman_download.png";
+import target from "../../../assets/target_annotated.png";
+import griffin from "../../../assets/peter_griffin.gif";
+import flexLeft from "../../../assets/flex-left.png";
+import flexRight from "../../../assets/flex-right.png";
+
+Vi ska nu börja bygga en webbshop och vi börjar utifrån [exemplen i kapitel 2 i kursliteraturen](https://learning.oreilly.com/library/view/designing-interfaces-3rd/9781492051954/ch02.html#target). Vi ser att de två webbshoppar som visas där har en header-del, en main-del med en hero-bild och produktlistning, samt en footer. 
+
+<Image src={target} alt="Target med beskrivning av de olika delar" />
+
+
+
+## Grundläggande struktur
+
+Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här vill vi ha ett `header`, ett `hero`, ett `main` och ett `footer`-element. Ersätt `body`-delen i den befintliga koden i `index.html` i ditt kursrepo så att det ser ut som nedan.
+
+```html
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="site">
+    <header class="header">
+        <h1>Header</h1>
+    </header>
+    <div class="hero">
+        
+    </div>
+    <main class="container">
+        <h1>webshoppen</h1>
+        <p>Snart börjar jsux!</p>
+    </main>
+    <footer class="footer">
+        <p>footer</p>
+    </footer>
+</body>
+</html>
+```
+
+Vi fortsätter sedan med att gå in i `style.css` och i den filen vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en såkallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket såtr för 100 procent av viewport height, alltså hur stor browsern är.
+
+```css
+body {
+    font-family: sans-serif;
+    background-color: #0b9ea5;
+    line-height: 1.4;
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+```
+
+Vi sätter sedan bakgrundsfärg för `header` och `footer` så vi kan se hur vi påverkar `main` elementet om en liten stund.
+
+```css
+.header {
+    background-color: #fff;
+}
+
+.footer {
+    background-color: #333;
+    color: #fff;
+}
+```
+
+Nu kommer vi till den magiska biten med flexbox, som gör att vi slipper känna oss som Peter Griffin.
+
+<Image src={griffin} alt="Peter Griffin och CSS" />
+
+För `main` elementet med klassen `container` lägger vi till attributet `flex: 1;` ([flex-shorthand](https://css-tricks.com/snippets/css/a-guide-to-flexbox/#aa-flex)). Med hjälp av 'shorthand'-syntaxen sätter vi att vår container ska växa (`flex-grow`) och fylla upp allt innehåll i webbläsaren. Det ena attributet är alltså skillnaden på bilden till vänster nedan och bilden till höger.
+
+<div class="side-by-side">
+    <Image src={flexLeft} alt="Utan flex: 1" />
+    <Image src={flexRight} alt="Med flex: 1" />
+</div>
+
+
+
+### En Hero-bild
+
+Nu fortsätter vi med vår design och lägger in en stor bild precis under headern som sätter tonen för vår webbshop. Jag skapade bilden med en AI-tjänst, men går bra att använda bilder som ni själv har skapat.
+

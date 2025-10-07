@@ -14,3 +14,21 @@
 lite-youtube {
     max-width: 100% !important;
 }
+
+.side-by-side {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.side-by-side img {
+    width: 45%;
+    margin-top: 0;
+}
+
+@media (min-width: 64em) {
+    html {
+        font-size: 112.5%;
+    }
+}
