@@ -1,0 +1,157 @@
+---
+title: Ett färgschema för vår webbshop
+description: Utifrån ett färgschema strukturerar vi vår CSS.
+---
+
+import { Image } from 'astro:assets';
+import colorWheel from "../../../assets/color-wheel.png";
+
+
+
+
+## Förkunskaper
+
+Du bör ha jobbat igenom kmom01, lämnat in och skapat en ny branch `kmom02`. Du kan med fördel göra nedanstående direkt i ditt webshop-repo.
+
+
+
+## CSS-variabler
+
+Vi börjar med att ta en kopia av vår förstasida, som vi skapade i kmom01, så vi inte förstör något.
+
+```shell
+# stå i ditt repot
+cp index.html category.html
+```
+
+Vi har [Using CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascading_variables/Using_CSS_custom_properties) lätt till hands och ser i den artikeln hur vi kan skapa variabler som vi kan använda i våra CSS-filer. Vi börjar med att skapa filen `variables.css` och lägger till den i `category.html` ovanför `style.css`.
+
+```html
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="variables.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="main.js" type="module" defer></script>
+</head>
+```
+
+I `variables.css` skapar vi ett `:root` pseudo-element. Då CSS-variabler precis som alla andra CSS attribut enbart påverkar de element som passar in på selektorn vill vi se till att våra variabler påverkar globalt genom att nyttja `:root`.
+
+```css
+/* variables.css */
+:root {
+    --text-color: #333;
+    --background-color: #fff;
+}
+```
+
+Vi anger variabler med `--`-prefixen och kan sedan använda de i vår CSS med `var(--text-color)` till exempel som nedan.
+
+```css
+/* En del av style.css */
+body {
+    font-family: sans-serif;
+    background-color: var(--background-color);
+    line-height: 1.4;
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+```
+
+
+## Ett färgschema
+
+Med hjälp av [Adobe's Color Wheel](https://color.adobe.com/create/color-wheel) har jag skapat ett komplementärt färgschema enligt nedan. Färgarna kompleteras i vår design av vitt och nästan svart (#333) för bakgrund och text färg.
+
+<Image src={colorWheel} alt="Adobe's Color wheel" />
+
+Genom att använda ett färgschema ser vi till utifrån färgteori att ha färgar som antigen passar ihop eller ger en bra kontrast. Jag lägger till dessa variabler i `variables.css` i `:root` elementet.
+
+```css
+/* variables.css */
+:root {
+    --text-color: #333;
+    --background-color: #fff;
+    --yellow: #f5af2b;
+    --beige: #b5914e;
+    --light-blue: #2c83f5;
+    --blue: #5274a1;
+    --navy: #21334a;
+    --brown: #756649;
+}
+```
+
+Och kan nu använda de på ett smidigt sätt igenom hela webshoppen. Om ni vill kan variabler användas för annat än färg, till exempel typsnitt och marginaler.
+
+```css
+/* variables.css */
+:root {
+    --text-color: #333;
+    --background-color: #fff;
+    --yellow: #f5af2b;
+    --beige: #b5914e;
+    --light-blue: #2c83f5;
+    --blue: #5274a1;
+    --navy: #21334a;
+    --brown: #756649;
+    --header-font: sans-serif;
+    --text-font: serif;
+    --default-font-size: 1.25em;
+    --default-margin-bottom: 1.75rem;
+}
+```
+
+
+
+## Tema-väljare
+
+I många sammanhang har ni säkert sett att man på hemsidor kan välja mellan mörkt och ljust tema. Nu ska vi försöka implementera denna funktionalitet i vår webbshop.
+
+Vi skapar först en kopia på `variables.css`:
+
+```shell
+# stå i ditt repo
+cp variables.css variables-dark.css
+```
+
+I filen `variables-dark.css` ändrar vi nu så att standard bakgrundsfärgen blir standard text färgen och tvärtom, bara så vi ser skillnaderna sedan.
+
+```css
+/* variables-dark.css */
+:root {
+    --text-color: #fff;
+    --background-color: #333;
+    --yellow: #f5af2b;
+    --beige: #b5914e;
+    --light-blue: #2c83f5;
+    --blue: #5274a1;
+    --navy: #21334a;
+    --brown: #756649;
+    --header-font: sans-serif;
+    --text-font: serif;
+    --default-font-size: 1.25em;
+    --default-margin-bottom: 1.75rem;
+}
+```
+
+I `head`-delen av vår HTML lägger vi till `id="mode"` på `link`-elementet som laddar in `variables.css`.
+
+```html
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="variables.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="main.js" type="module" defer></script>
+</head>
+```
+

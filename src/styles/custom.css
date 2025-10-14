@@ -27,6 +27,10 @@ lite-youtube {
     margin-top: 0;
 }
 
+.time {
+    font-style: italic;
+}
+
 @media (min-width: 64em) {
     html {
         font-size: 112.5%;
