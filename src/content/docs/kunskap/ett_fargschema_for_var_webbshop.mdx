@@ -143,15 +143,18 @@ I filen `variables-dark.css` ändrar vi nu så att standard bakgrundsfärgen bli
 I `head`-delen av vår HTML lägger vi till `id="mode"` på `link`-elementet som laddar in `variables.css`.
 
 ```html
+<!-- category.html -->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>webshop</title>
 
-    <link rel="stylesheet" href="variables.css" />
+    <link rel="stylesheet" href="variables.css" id="mode" />
     <link rel="stylesheet" href="style.css" />
 
     <script src="main.js" type="module" defer></script>
 </head>
 ```
+
+
 
