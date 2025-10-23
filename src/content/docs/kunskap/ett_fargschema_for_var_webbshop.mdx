@@ -107,6 +107,8 @@ Och kan nu använda de på ett smidigt sätt igenom hela webshoppen. Om ni vill 
 }
 ```
 
+Se till att testa använda färgarna från `variables.css` i era `style.css` genom syntaxen var(--yellow) till exempel. I och med vi har definierat de i `:root` elementet är de tillgängliga i alla filer som hämtas in i `index.html` efter `variables.css`.
+
 
 
 ## Tema-väljare
@@ -140,7 +142,7 @@ I filen `variables-dark.css` ändrar vi nu så att standard bakgrundsfärgen bli
 }
 ```
 
-I `head`-delen av vår HTML lägger vi till `id="mode"` på `link`-elementet som laddar in `variables.css`.
+I `head`-delen av vår HTML lägger vi till `id="variables-style"` på `link`-elementet som laddar in `variables.css`. Vi skapar även katalog `views` och lägger `main.js` från förra veckans uppgift i den katalogen. Vi skapar sedan filen `views/mode-selector.js` genom kommandot `touch views/mode-selector.js` i terminalen när du står i roten av ditt repo.
 
 ```html
 <!-- category.html -->
@@ -149,12 +151,55 @@ I `head`-delen av vår HTML lägger vi till `id="mode"` på `link`-elementet som
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>webshop</title>
 
-    <link rel="stylesheet" href="variables.css" id="mode" />
+    <link rel="stylesheet" href="variables.css" id="variables-style" />
     <link rel="stylesheet" href="style.css" />
 
-    <script src="main.js" type="module" defer></script>
+    <script src="views/main.js" type="module" defer></script>
+    <script src="views/mode-selector.js" type="module" defer></script>
 </head>
 ```
 
+I header-delen som är en del av `body` i `category.html` lägger vi till en dropdown-meny med följande kod.
+
+```html
+<!-- category.html -->
+<select id="mode">
+    <option value="variables.css">Light</option>
+    <option value="variables-dark.css">Dark</option>
+</select>
+```
 
 
+I filen `views/mode-selector.js` lägger vi till följande kod. Vi plockar in de två elementen vi har definierat i `category.html`: `<link>`-elementet som laddar in variabel CSS'n och `<select>`-elementet som låter oss välja mellan de olika 'modes'. Vi skapar sedan en `eventListener` för eventet `change` på `<select>` elementet och ändrar `href`-attributet baserat på värdet av `select`-elementet.
+
+```js
+// views/mode-selector.js
+const variables = document.getElementById("variables-style");
+const modeSelect = document.getElementById("mode");
+
+modeSelect.addEventListener("change", function(event) {
+    variables.setAttribute("href", event.target.value);
+});
+```
+
+Om du ändrar värde för `select`-elementet bör du nu om allt är konfigurerat som det är beskrivit ovan och du använder variablerna på rätt sätt i din `style.css` byta bakgrundsfärg och text färg varje gång du ändrar på `select`-elementet. Men laddar vi om sidan består inte ändringarna. Därför väljer vi att använda oss av `localStorage` (Dokumentation: [https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)). LocalStorage gör det möjligt för oss att spara okänslig data i webbläsaren kopplat till domänen vi just nu är inne på. Det finns två huvudsakliga funktioner `get` och `set`.
+
+Vi använder de på följande sätt i vår kod.
+
+```js
+// views/mode-selector.js
+const variables = document.getElementById("variables");
+const modeSelect = document.getElementById("mode");
+
+modeSelect.addEventListener("change", function(event) {
+    variables.setAttribute("href", event.target.value);
+    localStorage.setItem("mode", event.target.value);
+});
+
+if (localStorage.getItem("mode")) {
+    variables.setAttribute("href", localStorage.getItem("mode"));
+    modeSelect.value = localStorage.getItem("mode");
+}
+```
+
+När vi ändrar på `select`-elementet ser vi till att sätta värdet i `localStorage`. Vi ser även till att när vi öppnar sidan att sätta värdet från `localStorage` som värde för `href`-attributet för `link` elementet och värdet för vårt `select`-element.
