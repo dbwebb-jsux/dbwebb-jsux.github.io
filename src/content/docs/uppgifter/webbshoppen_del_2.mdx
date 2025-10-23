@@ -3,22 +3,45 @@ title: Webbshoppen del 2
 description: Kravspecifikation för webbshoppen del 2
 ---
 
-Vi ska nu bygga den första delen av vår webbshop. Du har fått en stor del av hur det bör fungera i övningen [Förstasidan för en webbshop](../kunskap/forstasidan_for_en_webbshop). Nu är det dags för dig att lägga din hand på sidan och anpassa den efter ditt tycke med hjälp av 
+Vi ska nu bygga vidare på vår webbshop och skapa en kategori-sida som matchar en av de kategorier som det finns musik för i lager-API:t.
 
 
 
 ## Förkunskaper
 
-Du bör ha en egen fork av kursrepot [webshop](https://github.com/dbwebb-jsux/webshop). Du bör ha jobbat igenom övningen [Lager API:t](../kunskap/lager_apit) där du har skaffat dig en API-nyckel och skapat filen `models/auth.js` och du bör ha jobbat igenom övningen [Förstasidan för en webbshop](../kunskap/forstasidan_for_en_webbshop).
+Du bör ha klarat av kmom01 och uppgiften "[Webbshoppen del 1](/uppgifter/webbshoppen_del_1)" och jobbat igenom övningen "[Ett färgschema för vår webbshop](/kunskap/ett_fargschema_for_var_webbshop)".
+
+
+
+## Kategorier i Lager-API:t
+
+För varje produkt som du har kopierat över finns det en kategori. Det finns fyra kategorier: Pop, Hard rock, Hip-Hop och Country och det finns tre stycken album per kategori.
+
+```json
+{
+    "id": 46103,
+    "article_number": null,
+    "name": "Pink Voltage",
+    "description": "### **Band Name:** **Pink Voltage**\n\n### **Tagline:** *Sugar, sparkles, and just enough sass to short-circuit your heart.*\n\n### **Backstory:**\n\nFormed in a candy-colored garage studio in Malibu, **Pink Voltage** is the brainchild of four glitter-drenched rebels with a love for bubblegum beats and fierce fashion. Originally brought together by a shared obsession with Y2K pop and 80s glam rock, the girls fused their styles into a new genre they call **Electro-Dream Pop**—think synths, sparkle, and savage hooks.\n\nEach member has a signature color and vibe:\n\n* **Lola Luxe (Lead vocals)** The diva with diamond pipes and a closet full of sequins. She started as a child pageant queen turned pop powerhouse.\n* **Neon Nia (DJ/Producer)** A tech-genius with a pink mohawk who programs beats like she codes dreams. Known for turning heartbreak into bangers.\n* **Cherry Blaze (Guitar & Hype)** A roller-skating punk princess who shreds bubblegum rock solos and inspires crowd-wide dance breakdowns.\n* **Glitta B (Rap/Style Icon)** The fashion-forward spitfire who drops pastel-colored bars with atomic confidence. A former fashion blogger turned lyrical slayer.\n\nThe band skyrocketed to fame after their debut single **Glitter Emergency** went viral on DollTok (a Barbie-world version of TikTok), leading to sold-out arena shows, a capsule collection with Mattel, and a Saturday morning animated series.\n\nThey stand for **self-expression, friendship, fierce femininity**, and proving that **you can be plastic and still be fantastic**.",
+    "specifiers": null,
+    "stock": 12,
+    "location": "A1B4",
+    "price": 1,
+    "image_url": "https://cdn.jsdelivr.net/gh/emilfolino/order_api@master/public/img/pink_voltage.png",
+    "category": "pop"
+},
+```
 
 
 
 ## Kravspecifikation
 
-1. Välj en webbshop som du vill inspireras av under kursens gång. Samma webbshop som du valde i uppgiften [Typsnitt och färg](/uppgifter/typsnitt_och_farg).
+1. Fortsätt bygga ut din `category.html` sida från övningen "[Ett färgschema för vår webbshop](/kunskap/ett_fargschema_for_var_webbshop)".
 
-1. Din webbshop ska innehålla en header, en main-del och en footer.
+1. Gör ett färgschema som passar en av de 4 kategorierna av musik för produkterna.
 
-1. I main-delen ska det finnas en hero-bild och produktlistning av alla musik-album med titel och bild.
+1. Använd färgschemat för att skapa ett Ljust och ett mörkt tema där du varierar bakgrundsfärg och textfärg mellan teman. Gör det möjligt att välja mellan teman.
 
-1. Driftsätt din webbshop på GitHub Pages och säkerställ att det har gått bra.
+1. På din `category.html` sida ska de tre albummen som finns för din valda kategori visas upp med titel, bild och hela beskrivningen.
+
+1. Skapa en tydlig länk från din förstasida till din `category.html` som underlättar navigation.
