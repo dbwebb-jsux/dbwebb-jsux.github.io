@@ -1,0 +1,79 @@
+---
+title: En varukorg med CSS och JavaScript
+description: Vi skapar en varukorg där vi kan lägga till våra skivor.
+---
+
+## Förkunskaper
+
+Du bör ha jobbat igenom kmom02, lämnat in och skapat en ny branch `kmom03`. Du kan med fördel göra nedanstående direkt i ditt webshop-repo.
+
+
+
+## Knappar för att lägga till i varukorgen
+
+Jag kommer i exemplet utgå från den produktlistningen som jag har i `index.html` och JavaScript koden i `main.js` som skriver ut den produktlistningen. I `main.js`-filen använder jag `map`-för att iterera över produkterna som jag har hämtat från API:t. Här lägger jag till ett `span` element med klassen `add-to-cart` och den specifika produktens id som id för att lägga till varor i varukorgen.
+
+```javascript
+// main.js
+products.map((product) => {
+    return `<div class="product">
+    <img src="${product.image_url}" alt="Album art ${product.name}" />
+    <div class="bottom">
+        <p>${product.name}</p>
+        <span class="add-to-cart" id="${product.id}">+</span>
+    </div>    
+</div>`
+  }).join("\n")
+```
+
+Jag skapar sedan filen `cart.css` som jag lägger till i `head`-elementet. Här lägger jag till CSS för att få en rund cirkel runt + tecknet som finns i `span`-elementet. Vi använder samma höjd och bredd, samt border-radius 50% för att skapa en rund cirkel, sedan använder vi flexbox för att centrera innehållet.
+
+```css
+/* cart.css */
+.add-to-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--text-color);
+    color: var(--background-color);
+    border-radius: 50%;
+    font-size: 2rem;
+    width: 3ch;
+    height: 3ch;
+    cursor: pointer;
+}
+```
+
+Vi skapar nu `cart.js` som kommer innehålla JavaScript-koden för vår varukorg och lägger till den som de andra JavaScript-filerna i `head`-delen. Vi vill nu koppla en `eventListener` till de knapparna som vi precis skapade i `main.js`. Vi gör det genom funktionen `instantiateCartButtons` som vi sedan exporterar från filen.
+
+```javascript
+// cart.js
+function instantiateCartButtons() {
+  document.querySelectorAll(".add-to-cart").forEach(
+    (elem) => elem.addEventListener("click", addToCart)
+  )
+}
+
+function addToCart(event) {
+  console.log(event.target.id)
+}
+
+export { instantiateCartButtons }
+```
+
+Vi kan sedan i `main.js` importera filen och anropa funktionen efter att vi hämtat produkterna och lagt till produkterna och lägg-till-i-varukorgs-knappen i DOM-trädet.
+
+
+```javascript
+productList.innerHTML = products.map((product) => {
+    return `<div class="product">
+    <img src="${product.image_url}" alt="Album art ${product.name}" />
+    <div class="bottom">
+        <p>${product.name}</p>
+        <span class="add-to-cart" id="${product.id}">+</span>
+    </div>    
+</div>`
+}).join("\n")
+
+instantiateCartButtons()
+```

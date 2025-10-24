@@ -147,14 +147,13 @@ Notera nedan att `script` taggen har attributet `type` satt till `module` och at
 I `main.js` börjar vi med att importera `auth`-objektet, som vi exporterade från filen `models/auth.js` i övningen [Lager API:t](../kunskap/lager_apit). Vi skapar sedan en funktion `renderProducts`, som vi sedan anropar. I funktionen använder vi `document.getElementById` för att koppla oss mot `#product-list` elementet som vi skapade i `index.html`.
 
 ```javascript
-import auth from "./models/auth.js";
+import auth from "./models/auth.js"
 
 function renderProducts() {
-    const productList = document.getElementById("product-list");
-
+  const productList = document.getElementById("product-list")
 }
 
-renderProducts();
+renderProducts()
 ```
 
 Vi vill nu utnyttja `auth`-objektet och hämta data från API:t. Först sätter vi att `renderProducts` ska vara en `async`-funktion så vi kan använda `async/await` tillsammans med `fetch`.
@@ -162,37 +161,37 @@ Vi vill nu utnyttja `auth`-objektet och hämta data från API:t. Först sätter 
 Sedan anropar vi `fetch` med URL'n och API-nyckeln från Lager API:t och gör om så att svaret vi får blir gjort om till ett JavaScript objekt med hjälp av `json()`-funktionen från Response objektet.
 
 ```javascript
-import auth from "./models/auth.js";
+import auth from "./models/auth.js"
 
 async function renderProducts() {
-    const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`);
-    const result = await response.json();
-    const productList = document.getElementById("product-list");
+  const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+  const result = await response.json()
+  const productList = document.getElementById("product-list")
 
-    console.log(result);
+  console.log(result)
 }
 
-renderProducts();
+renderProducts()
 ```
 
 Om du laddar om din webbshop i webbläsaren bör du nu få en utskrift av de produkter, som finns kopplade till din API-nyckel i webbläsarens konsol. Det som finns kvar nu är alltså att lägga till element i `#product-list`-elementet. Vi använder oss av `Array.prototype.map`-funktionen ([MDN dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)) för att skapa en array med HTML-strängar. Sedan använder vi `Array.prototype.join`-funktionen ([MDN dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)) för att slå ihop allt till en stor sträng som vi sätter som `innerHTML` för `productList` elementet.
 
 ```javascript
-import auth from "./models/auth.js";
+import auth from "./models/auth.js"
 
 async function renderProducts() {
-    const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`);
-    const result = await response.json();
-    const productList = document.getElementById("product-list");
+  const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+  const result = await response.json()
+  const productList = document.getElementById("product-list")
 
-    const productArray = result.data.map((product) => {
-        return `<div class="product">
-    <img src="${product.image_url}" alt="Album art ${product.name}" />
-    <h3>${product.name}</h3>        
-</div>`;
-    });
+  const productArray = result.data.map((product) => {
+      return `<div class="product">
+  <img src="${product.image_url}" alt="Album art ${product.name}" />
+  <h3>${product.name}</h3>        
+</div>`
+  })
 
-    productList.innerHTML = productArray.join("\n");
+  productList.innerHTML = productArray.join("\n")
 }
 
 renderProducts();

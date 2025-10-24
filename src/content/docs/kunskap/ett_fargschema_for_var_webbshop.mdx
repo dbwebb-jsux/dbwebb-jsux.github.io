@@ -174,12 +174,12 @@ I filen `views/mode-selector.js` lägger vi till följande kod. Vi plockar in de
 
 ```js
 // views/mode-selector.js
-const variables = document.getElementById("variables-style");
-const modeSelect = document.getElementById("mode");
+const variables = document.getElementById("variables-style")
+const modeSelect = document.getElementById("mode")
 
 modeSelect.addEventListener("change", function(event) {
-    variables.setAttribute("href", event.target.value);
-});
+    variables.setAttribute("href", event.target.value)
+})
 ```
 
 Om du ändrar värde för `select`-elementet bör du nu om allt är konfigurerat som det är beskrivit ovan och du använder variablerna på rätt sätt i din `style.css` byta bakgrundsfärg och text färg varje gång du ändrar på `select`-elementet. Men laddar vi om sidan består inte ändringarna. Därför väljer vi att använda oss av `localStorage` (Dokumentation: [https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)). LocalStorage gör det möjligt för oss att spara okänslig data i webbläsaren kopplat till domänen vi just nu är inne på. Det finns två huvudsakliga funktioner `get` och `set`.
@@ -188,17 +188,17 @@ Vi använder de på följande sätt i vår kod.
 
 ```js
 // views/mode-selector.js
-const variables = document.getElementById("variables");
-const modeSelect = document.getElementById("mode");
+const variables = document.getElementById("variables")
+const modeSelect = document.getElementById("mode")
 
 modeSelect.addEventListener("change", function(event) {
-    variables.setAttribute("href", event.target.value);
-    localStorage.setItem("mode", event.target.value);
-});
+    variables.setAttribute("href", event.target.value)
+    localStorage.setItem("mode", event.target.value)
+})
 
 if (localStorage.getItem("mode")) {
-    variables.setAttribute("href", localStorage.getItem("mode"));
-    modeSelect.value = localStorage.getItem("mode");
+    variables.setAttribute("href", localStorage.getItem("mode"))
+    modeSelect.value = localStorage.getItem("mode")
 }
 ```
 
