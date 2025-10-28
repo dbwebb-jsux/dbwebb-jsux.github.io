@@ -61,10 +61,14 @@ function addToCart(event) {
 export { instantiateCartButtons }
 ```
 
-Vi kan sedan i `main.js` importera filen och anropa funktionen efter att vi hämtat produkterna och lagt till produkterna och lägg-till-i-varukorgs-knappen i DOM-trädet.
-
+Vi kan sedan i `main.js` importera och anropa funktionen efter att vi hämtat produkterna och lagt till produkterna och lägg-till-i-varukorgs-knappen i DOM-trädet.
 
 ```javascript
+// main.js
+import { instantiateCartButtons } from "./cart.js"
+ 
+// Andra funktioner och kod
+
 productList.innerHTML = products.map((product) => {
     return `<div class="product">
     <img src="${product.image_url}" alt="Album art ${product.name}" />
@@ -76,4 +80,79 @@ productList.innerHTML = products.map((product) => {
 }).join("\n")
 
 instantiateCartButtons()
+```
+
+
+
+### Själva varukorgshanteringen
+
+Vi kan nu börja med att lägga till saker i varukorgen i funktionen `addToCart`, som anropas från `instantiateCartButtons`. Vi kommer som i kmom02 använda oss av LocalStorage för att hantera varukorgen. Vi kan bara spara ner strängar till LocalStorage, men vi använder os av `JSON.parse`  och `JSON.stringify` ([Dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON)) för att göra om objekt till strängar och omvänt.
+
+Vi hämtar eller skapar först varukorgen utifrån LocalStorage eller ett tomt objekt. Sedan kollar vi om produkten redan finns i varukorgen och lägger då till ytterligare annars lägger vi till produkten i varukorgen. Vi avslutar med med att göra objektet till en sträng igen och sedan 
+
+```javascript
+// cart.js
+function addToCart(event) {
+  const productID = event.target.id
+  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
+
+  if (cart[productID]) {
+    cart[productID] = cart[productID] + 1
+  } else {
+    cart[productID] = 1
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart))
+}
+```
+
+
+### Visa varukorgen
+
+Högst upp i `index.html` lägger jag i det elementet som jag vill ska innehålla min varukorg.
+
+```html
+<!-- index.html -->
+<body class="site">
+    <div class="cart-content" id="cart-content">
+        <div class="cart-header">
+            <h3>Inköpsvagn</h3>
+            <p class="close-cart" id="close-cart">x</p>
+        </div>
+
+        <div class="cart-products" id="cart-products"></div>
+    </div>
+    <header class="header">
+
+<!-- resten av koden -->
+```
+
+I filen `cart.css` lägger jag till följande CSS för att designa varukorgen. Jag använder `position: absolute;` för att lägga varukorgen utanför det normala flödet så det ser ut som den är ovanför resten av sidan. Just nu kan du inte se varukorgen men om du kommentarer ut `display: none;` bör den visas som att den tar upp knappt hälften av skärmen.
+
+```css
+/* cart.css */
+.cart-content {
+    display: none;
+    position: absolute;
+    top: 1vh;
+    right: 0;
+    height: 98vh;
+    width: 40vw;
+    background-color: var(--background-color);
+    border-top-left-radius: 1.75rem;
+    border-bottom-left-radius: 1.75rem;
+    padding: 1.75rem;
+    z-index: 1;
+    box-shadow: -4px 4px 20px 0 rgba(0 0 0 / 75%);
+    overflow-y: scroll;
+}
+```
+
+Vi lägger även till selektorn `.cart-content.active` i `cart.css`. När vi har två klasser utan mellanrum i våra CSS-filer innebär det element som har båda klasserna.
+
+```css
+/* cart.css */
+.cart-content.active {
+    display: block;
+}
 ```
