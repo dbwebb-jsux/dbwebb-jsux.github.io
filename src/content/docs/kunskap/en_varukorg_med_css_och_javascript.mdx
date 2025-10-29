@@ -109,7 +109,7 @@ function addToCart(event) {
 
 ### Visa varukorgen
 
-Högst upp i `index.html` lägger jag i det elementet som jag vill ska innehålla min varukorg.
+Högst upp i `index.html` lägger jag i det elementet som jag vill ska innehålla min varukorg `.cart-content`. Jag lägger även till objektet `<div class="cart" id="cart">🛒</div>` som kan användas för att öppna och stänga varukorgen.
 
 ```html
 <!-- index.html -->
@@ -123,6 +123,21 @@ Högst upp i `index.html` lägger jag i det elementet som jag vill ska innehåll
         <div class="cart-products" id="cart-products"></div>
     </div>
     <header class="header">
+        <div class="inner-header">
+            <h1><a href="index.html">Emil's skivor</a></h1>
+
+            <div class="right">
+                <a href="category.html">Kategori-sidan</a>
+
+                <div class="cart" id="cart">🛒</div>
+
+                <select id="mode" class="mode">
+                    <option value="variables.css">Light</option>
+                    <option value="variables-dark.css">Dark</option>
+                </select>
+            </div>            
+        </div>        
+    </header>
 
 <!-- resten av koden -->
 ```
@@ -131,6 +146,11 @@ I filen `cart.css` lägger jag till följande CSS för att designa varukorgen. J
 
 ```css
 /* cart.css */
+.cart {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
 .cart-content {
     display: none;
     position: absolute;
@@ -155,4 +175,103 @@ Vi lägger även till selektorn `.cart-content.active` i `cart.css`. När vi har
 .cart-content.active {
     display: block;
 }
+```
+
+Vi kan nu börja titta på logiken för att öppna och stänga varukorgen. Vi fortsätter med denna kod i `cart.js`. Först ser vi till att hämta ut de element som vi vill påverka och skapar sedan en `eventListener` för `cart`.
+
+```javascript
+// cart.js
+const cartContent = document.getElementById("cart-content")
+const cart = document.getElementById("cart")
+cart.addEventListener("click", toggleCart)
+```
+
+I funktion `toggleCart` sätter vi först `style.top` attributet till hur långt vi har scrollat ner på sidan plus 1% av höjden av webbläsar fönstret. 1% av höjden motsvarar `1vh` som vi satte i CSS filen. Sedan togglar vi klassen `active` på varukorgselementet. När vi använder funktionen `toggle` läggs klassen till om den inte redan finns på elementet. Om klassen redan finns tas den bort.
+
+Vi kollar sedan om klassen finns där och kapar då bort all `overflow` (det som finns utanför webbläsarfönstret) vilket göra att vi inte kan scrolla på sidan när varukorgen är öppen. Vi anropar även funktionen `renderCartProducts()` som renderar produkterna.
+
+```javascript
+// cart.js
+function toggleCart() {
+  cartContent.style.top = `${(window.scrollY + document.documentElement.clientHeight / 100)}px`
+  cartContent.classList.toggle("active")
+
+  if (cartContent.classList.contains("active")) {
+    document.body.style.overflow = "hidden"
+    renderCartProducts()
+  } else {
+    document.body.style.overflow = "auto"
+  }
+}
+```
+
+I `renderCartProducts()` hämtar vi ut vår varukorgsobjekt från LocalStorage och renderar ut varje produkt med det antal som ligger i varukorgen. Hela koden för `cart.js` ser alltså ut på detta sättet.
+
+```javascript
+// cart.js
+import products from "../models/products.js"
+
+const cartContent = document.getElementById("cart-content")
+const cart = document.getElementById("cart")
+cart.addEventListener("click", toggleCart)
+
+const closeCart = document.getElementById("close-cart")
+closeCart.addEventListener("click", toggleCart)
+
+function toggleCart() {
+  cartContent.style.top = `${(window.scrollY + document.documentElement.clientHeight / 100)}px`
+  cartContent.classList.toggle("active")
+
+  if (cartContent.classList.contains("active")) {
+    document.body.style.overflow = "hidden"
+    renderCartProducts()
+  } else {
+    document.body.style.overflow = "auto"
+  }
+}
+
+function instantiateCartButtons() {
+  document.querySelectorAll(".add-to-cart").forEach(
+    (elem) => elem.addEventListener("click", addToCart)
+  )
+}
+
+function addToCart(event) {
+  const productID = event.target.id
+  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
+
+  if (cart[productID]) {
+    cart[productID] = cart[productID] + 1
+  } else {
+    cart[productID] = 1
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart))
+
+  toggleCart()
+}
+
+async function renderCartProducts() {
+  let cartHTML = "<p>No products in cart.</p>"
+  if (localStorage.getItem("cart")) {
+    const cart = JSON.parse(localStorage.getItem("cart"))
+    const cartItems = []
+
+    for (let product in cart) {
+      const productInfo = await products.fetchProduct(product)
+      const cartItem = `<div class="cart-item">
+    <img src="${productInfo.data.image_url}" alt="Album art ${productInfo.data.name}" />
+    <p>${productInfo.data.name}</p><p>Antal: ${cart[product]}</p>
+</div>`
+
+      cartItems.push(cartItem)
+    }
+
+    cartHTML = cartItems.join("\n")
+  }
+
+  document.getElementById("cart-products").innerHTML = cartHTML
+}
+
+export { instantiateCartButtons }
 ```
