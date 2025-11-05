@@ -1,0 +1,18 @@
+---
+title: Rendera markdown i JavaScript
+description: Vi laddar ner en modul från ett CDN och renderar markdown
+---
+
+En del har säkert redan sett att `product.description` delen av produkterna från Lager-API:t ser lite knasiga ut. De är skrivna med markdown och för att vi ska kunna visa det på ett snyggt sätt använder vi oss av en markdown parser.
+
+Vi väljer att ladda ner en modul direkt från ett CDN genom att använda `import`-syntaxen.
+
+```javascript
+import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js"
+```
+
+Vi kan nu använda den i resterande del av koden, till exempel som nedan.
+
+```javascript
+let descriptionElement.innerHTML = `<p>${marked.parse(product.description)}</p>`
+```
