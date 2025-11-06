@@ -1,11 +1,18 @@
 ---
 title: ⚠️ kmom04 - formulär
-description: Kursmoment 2
+description: Kursmoment 4
 ---
-
+import { Image } from 'astro:assets';
+import stripe from "../../../assets/stripe.webp";
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution">Kursmomentet är under utveckling. Påbörja först när rutan är borta.</Aside>
+
+I detta kursmoment ska vi ska ett lättanvänt formulär och integrera Stripe för betalning.
+
+<Image src={stripe} alt="Adobe's Color wheel" />
+
+
 
 ### En branch för kmom04
 
@@ -17,9 +24,24 @@ git checkout -b kmom04
 ```
 
 
+
 ## Läsa & titta
 
+<p class="time">(Ungefär 8 studietimmar)</p>
+
 ### Kurslitteratur
+
+I kursen används [Designing interfaces: patterns for effective interaction design](https://go.exlibris.link/zrLb9rwc) skriven av Tidwell J, Brewer C, Valencia A som kurslitteratur. Boken är tillgänglig som e-bok via biblioteket.
+
+Läs kapitel "10. Getting Input from Users: Forms and Controls"
+
+
+
+### Lästips
+
+Läs igenom artikeln [Website Forms Usability: Top 10 Recommendations](https://www.nngroup.com/articles/web-form-design/).
+
+Läs igenom artikeln [CO2 emissions on the web](https://www.dannyvankooten.com/blog/2020/website-carbon-emissions/) och skumma igenom en av referenserna använt i artikeln [Evaluating the Energy Consumption of Mobile Data Transfer—From Technology Development to Consumer Behaviour and Life Cycle Thinking](https://doi.org/10.3390/su10072494).
 
 
 
@@ -37,5 +59,32 @@ Onsdag eftermiddag håller Kenneth, Mattias och Emil en gemensam föreläsning, 
 
 ## Öva
 
+<p class="time">(Ungefär 6 studietimmar)</p>
 
-## Kravspecifikation
+* Gör övningen [Orderformulär för webbshoppen](/kunskap/orderformular_for_webbshoppen).
+
+* Gör övningen [Integrera Stripe i orderformuläret](/kunskap/integrera_stripe).
+
+
+
+## Uppgifter
+
+* <p class="time">(Ungefär 6 studietimmar)</p>
+
+* Gör uppgiften "[Resurser på webben](/uppgifter/resurser_pa_webben)" enligt kravspecifikationen och lämna in enligt nedan.
+
+* Gör uppgiften "[Webbshoppen del 4](/uppgifter/webbshoppen_del_4)" enligt kravspecifikationen och lämna in enligt nedan.
+
+Gör din inlämning som en Pull Request enligt instruktionen i kmom01.
+
+
+
+## Reflektera
+
+<p class="time">(Ungefär 1 studietimme)</p>
+
+Som en del av din inlämning via GitHub svara på nedanstående frågor. Se till att du skriver 5-8 meningar per fråga om dina lärdomar och reflektioner. Vi vill inte läsa vad ChatGPT, Claude eller Copilot har för reflektioner, men vad ni har lärt er under veckan.
+
+* Vad är din största lärdom kopplat till formulär från artikeln Website Forms Usability: Top 10 Recommendations?
+* Hur var det att jobba med Stripe integrationen?
+* Vilken är din TIL för detta kmom?
