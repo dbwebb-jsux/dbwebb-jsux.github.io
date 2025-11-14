@@ -1,0 +1,207 @@
+---
+title: Integrera Stripe
+description: Vi tittar på hur vi kan integrera ett betalflöde i vår webbshop.
+---
+
+
+
+## Förkunskaper
+
+Du har gjort "[Webbshoppen del 3](/uppgifter/webbshoppen_del_3)" och har en varukorg på plats med hjälp av LocalStorage.
+
+
+
+## Förutsättningar
+
+Från min (Emil här) tid som IT-konsult aka. "Skriva-PHP-för-pengar"-programmerare var det jag upplevde som svårast och ofta ganska nervöst kopplat till betalningar och därigenom pengar. Vi ska i detta kursmoment testa på hur vi kan implementera betallösningar i en kontext där det inte kan bli fel.
+
+Jag har varit i kontakt med betallösningsföretaget [Stripe](https://stripe.com/en-se) och vi har fått använda deras Test-infrastruktur i kursen. När vi hanterar betalningar behövs i de allra flesta fall en server-lösning, vilket hade varit ett litet stort steg såhär tidigt i utbildningarna. Därför finns det en implementerat Stripe-server för [Embedded Checkout](https://docs.stripe.com/checkout/embedded/quickstart), som en del av [Lager API:t Stripe](https://lager.emilfolino.se/v2#payments). Om ni vill ta en titt på koden för servern kan ni titta i [emilfolino/order_api](https://github.com/emilfolino/order_api/blob/master/v2/route/stripe.js).
+
+
+
+## Ett order-formulär
+
+I varukorgen börjar vi med att skapa en knapp `<a class="button" href="order.html">Beställ</a>` för att gå till en ny fil `order.html`. Vi skapar sedan filen `order.html` som en kopia av `index.html` för att det är det enklaste sättet att få till en grund-sida. `order.html` ser alltså ut så här med varukorgen och header förkortat med ... för läsbarhet.
+
+```html
+<!-- order.html -->
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="style/variables.css" id="variables-style" />
+    <link rel="stylesheet" href="style/cart.css" />
+    <link rel="stylesheet" href="style/forms.css" />
+    <link rel="stylesheet" href="style/style.css" />
+
+    <script src="https://js.stripe.com/clover/stripe.js"></script>
+
+    <script src="views/mode-selector.js" type="module" defer></script>
+    <script src="views/cart.js" type="module" defer></script>    
+    <script src="views/order.js" type="module" defer></script>
+</head>
+<body class="site">
+    <div class="cart-content" id="cart-content"> ... </div>
+    <header class="header"> ... </header>
+    <main class="container">
+        <div class="hero">
+            <img src="assets/hero-banner.jpg" alt="hero banner showing records" />
+        </div>
+        <div class="order-form-container" id="order-form-container">
+            <h2>Kundinformation</h2>
+
+            <div class="checkout" id="checkout"></div>
+        </div>
+    </main>
+    <footer class="footer">
+        <h3>Footer</h3>
+        <p>Här skrivs massa.</p>
+    </footer>
+</body>
+</html>
+```
+
+I ovanstående har vi tagit bort `views/main.js` som renderar produkterna på första sidan. Vi har lagt till stripe.js från deras CDN, en `order.js` som vi kommer skriva JavaScript koden för att implementera Stripe och order-funktionaliteten i, samt en `forms.css` för att göra stilen för formulären. I main-delen har vi förutom Hero-bannern än så länge:
+
+```html
+    <div class="order-form-container" id="order-form-container">
+        <h2>Kundinformation</h2>
+
+        <div class="checkout" id="checkout"></div>
+    </div>
+```
+
+Vi börjar med att initiera `Stripe`-objektet i `order.js`. Nyckeln som `Stripe`-objektet initieras med är Stripes publika nyckeln, i backenden finns en hemlig nyckel som matchar den publika. Vi kommer alla använda samma publika nyckel så ni kan kopiera koden nedan rakt av. Kommentaren högst upp `/* global Stripe */` är för att indikera att vi har laddat in det globala objektet Stripe genom att ladda filen `stripe.js`.
+
+```javascript
+// order.js
+/* global Stripe */
+
+const stripe = Stripe('pk_test_51SQm4wL626KeakG07TkoOmFZOxD1rmmeWQb9pCO0dfEAuny10glrtIPS7cXD43ecMg5uS1ahzngx1zV4Md2F55dM00iLh6AzSO')
+```
+
+Vi skapar och anropar sedan funktionen `initializeCheckout()`, som används för att visa upp betalningsformuläret från Stripe. I funktionen skapas först ett `checkout` objekt, där funktionen `fetchClientSecret` anropas. `fetchClientSecret` gör ett POST anrop mot Lager-API:t med ett data-objekt som innehåller 3 saker. En array med de varor användaren vill köpa (vi tar snart en titt på funktionen `buildItems`), en retur URL som Stripe sedan kommer ladda efter betalningen har genomförts och API-nyckeln till Lager-API:t (precis som tidigare).
+
+```javascript
+// order.js
+/* global Stripe */
+
+import auth from "../models/auth.js"
+
+const stripe = Stripe('pk_test_51SQm4wL626KeakG07TkoOmFZOxD1rmmeWQb9pCO0dfEAuny10glrtIPS7cXD43ecMg5uS1ahzngx1zV4Md2F55dM00iLh6AzSO')
+
+async function initializeCheckout() {
+  const fetchClientSecret = async () => {
+    const data = {
+      items: await buildItems(),
+      return_url: location.href,
+      api_key: auth.api_key,
+    }
+
+    const response = await fetch(`${auth.api_url}/stripe/create-checkout-session`, {
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json'
+      },
+      method: "POST",
+    })
+    const { clientSecret } = await response.json()
+    return clientSecret
+  }
+
+  const checkout = await stripe.initEmbeddedCheckout({
+    fetchClientSecret,
+  })
+
+  checkout.mount('#checkout')
+}
+
+initializeCheckout()
+```
+
+Låt oss nu ta en titt på hur Lager-API:t förväntar sig att varorna kommer in till betallösningen i funktionen `buildItems`. I [API-dokumentationen](https://lager.emilfolino.se/v2#initiate_payment_session) ser vi att API:t förväntar sig följande:
+
+```javascript
+const items = [
+    {
+        price_data: {
+            currency: 'sek',
+            product_data: {
+                name: 'Patch Notes',
+            },
+            unit_amount: 10000,
+        },
+        quantity: 1,
+    },
+    {
+        price_data: {
+            currency: 'sek',
+            product_data: {
+                name: 'Putrid Cathedral',
+            },
+            unit_amount: 10000,
+        },
+        quantity: 2,
+    }
+]
+```
+
+Så låt oss skapa en funktion som utifrån varukorgen i LocalStorage skapar ett liknande objekt. Först parser vi ut ett objekt från den sparade JSON-strängen i LocalStorage. Sedan itererar vi över objektet och för varje produkt hämtar vi ut information om produkterna och skapar då `item` objektet enligt specifikationen i dokumentationen.
+
+```javascript
+// order.js
+async function buildItems() {
+  const cart = JSON.parse(localStorage.getItem("cart"))
+  let items = []
+
+  for (let product in cart) {
+    const productData = await products.fetchProduct(product)
+    const item = {
+      price_data: {
+        currency: 'sek',
+        product_data: {
+          name: productData.data.name
+        },
+        unit_amount: 10000,
+      },
+      quantity: cart[product]
+    }
+
+    items.push(item)
+  }
+
+  return items
+}
+```
+
+Nu kan vi ladda om sidan `order.html` och bör då se ett betalformulär från Stripe. Ni kan testa att betala med dessa [kortnummer](https://docs.stripe.com/testing#cards), ett datum nån gång i framtiden och valfria siffror och namn för att se att allt fungerar.
+
+
+
+## Ta hand om betalningen
+
+Om vi genomför en betalning bör ni se att sidan laddas om och att det läggas till en 'query-parameter' i sidan URL som ser ut enligt: `order.html?session_id=cs_test_b16Cm4aZOMZHXfcGu97uQroye5aB63VJUfA4sUbgGYqSMP9RXQTwfqeiW0`. Detta kan vi fånga upp och kolla om allt gick bra eller inte.
+
+Vi gör det genom att plocka ut `session_id` från URL'n och gör sedan ett anrop mot Lager API:t och `/stripe/session-status` endpointen. Här bör vi få tillbaka ett objekt `session` som innehåller `status`, `customer_email` och `payment_id`, som vi använder när vi i ett senare skede skapar ordern i API:t. 
+
+```javascript
+// order.js
+const urlParams = new URLSearchParams(window.location.search)
+const sessionId = urlParams.get('session_id')
+
+if (sessionId) {
+  const response = await fetch(`${auth.api_url}/stripe/session-status?session_id=${sessionId}&api_key=${auth.api_key  }`)
+  const session = await response.json()
+
+  if (session.status == 'complete') {
+    console.log(session)
+  } else {
+    initializeCheckout()
+  }
+} else {
+  initializeCheckout()
+}
+```

@@ -1,0 +1,229 @@
+---
+title: Orderformulär för webbshoppen
+description: Vi tittar på HTML5 input types och hur vi kan strukturera ett formulär.
+---
+
+import { Image } from 'astro:assets';
+import inputText from "../../../assets/inputs/input-text.png";
+import inputNumber from "../../../assets/inputs/input-number.png";
+import inputEmail from "../../../assets/inputs/input-email.png";
+import inputTel from "../../../assets/inputs/input-tel.png";
+import inputDate from "../../../assets/inputs/input-date.png";
+import inputPassword from "../../../assets/inputs/input-password.png";
+
+
+
+## Förskunskaper
+
+Du har jobbat igenom övningen [Integrera Stripe i orderformuläret](/kunskap/integrera_stripe) och har en `order.html` sida med en `order.js` på plats.
+
+
+
+## HTML5 input typer
+
+I och med introduktionen av HTML5 introducerades även ett antal nya [input typer](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input). Dessa typer specificerar vilken sorts data som inputfältet kan ta som indata. Detta gör det möjligt att hindra användaren från att fylla i fel sorts data, men även att anpassa användargränssnittet till det data som användaren skall fylla i. Nedan finns en listning av 6 input typer och hur en mobila enhet anpassas för input typen. Inputfälten visas i Android emulatorns webbläsare.
+
+Det helt vanliga text input fältet ger ett vanligt tangentbord och ingen klient validering av vilka värden som fylls i.
+
+```html
+<input type="text">
+```
+
+<Image src={inputText} alt="Input type text" class="input-img" />
+
+
+
+Om man har ett fält där användaren bara ska ange siffror kan man använda sig av `number`. Detta gör att tangentbordet på mobila enheter bytts ut mot ett numerisk och att det inte går att fylla i annat än karaktärer relaterade till siffror.
+
+```html
+<input type="number">
+```
+
+<Image src={inputNumber} alt="Input type number" class="input-img" />
+
+
+
+Om användaren skall fylla i sin e-postadress kan det vara bra med et input av typen `email`. Det underlättar för användaren när man skall använda @.
+
+```html
+<input type="email">
+```
+
+<Image src={inputEmail} alt="Input type email" class="input-img" />
+
+
+
+Vid ifyllning av telefonnummer kan det vara fördelaktigt att använda input av typen `tel`. Där får användaren upp ett numerisk tangentbord, som ser ut som det man använder när man skall ringa från en telefon.
+
+```html
+<input type="tel">
+```
+
+<Image src={inputTel} alt="Input type tel" class="input-img" />
+
+
+
+När vi har datumfält finns input av typen `date`. Med `date` får användaren av en mobil enhet upp en datum väljare. På desktop skiljer det mellan de olika webbläsare, men Chrome och Firefox ger användaren möjlighet för att välja datum formaterat enligt användarens inställningar. Det värde som skickas med när vi skickar formuläret är alltid formaterat enligt 'YYYY-MM-DD'.
+
+```html
+<input type="date">
+```
+
+<Image src={inputDate} alt="Input type date" class="input-img" />
+
+
+
+För fält där vi vill skriva in lösenord använder vi naturligtvis `password`.
+
+```html
+<input type="password">
+```
+
+<Image src={inputPassword} alt="Input type password" class="input-img" />
+
+
+
+## HTML5 validering av innehåll
+
+En viktig del av att designa ett formulär är att ge återkoppling till användaren om hen har fyllt i ett värde som är korrekt för detta fältet. Vi såg ovan att input-typen kan ta oss en bit på vägen, men vad om vi vill validera användarens innehåll ytterligare? "HTML5 to the rescue". Som alltid har MDN en bra artikel om dessa möjligheter: [Client-side form validation](https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation).
+
+I HTML5 finns fyra olika attribut vi kan använda på våra formulärfält för att validera innehållet.
+
+### required
+
+Om vi vill att ett specifikt fält måste vara ifyllt kan vi använda `required` på följande sätt. Om fältet är tomt när vi skickar formuläret, får vi upp en varning om detta.
+
+```html
+<input type="text" required="required">
+```
+
+
+
+### minlength & maxlength
+
+Som vi nästan kan räkna ut baserad på attributen kan vi här bestämma minimums och maximums längd för vårt innehåll. Om du använder dessa se till att det inte hindrar någon i att fylla data. Till exempel om man sätter får hårda krav på ett namn eller liknande.
+
+```html
+<input type="text" minlength="3" maxlength="8">
+```
+
+
+### min, max & step
+
+Kan användas tillsammans med numeriska input-fält (number, date, time, range) för att begränsa värdena. Step anger vilket steg användaren kan ta mellan olika värden.
+
+```html
+<input type="number" min="0" max="1" step="0.1">
+```
+
+
+### pattern
+
+Om man vill ta det ett steg längre kan man använda så kallade reguljära uttryck för att validera fältens innehåll. Till exempel om vi vill validera ett personnummer kan vi göra följande.
+
+```html
+<input type="text" pattern="[0-9]{6}-[0-9]{4}" placeholder="YYMMDD-XXXX" >
+```
+
+
+
+### CSS-pseudoklasser
+
+Ytterligare en fördel med form valideringen är att om fältet validerar får fältet pseudoklassen `:valid`. Om fältet inte validerar har det pseudoklassen `:invalid`. Vi kan sedan använda dessa pseudoklasser för att styla våra input fält. I nästa del av artikeln använder vi denna möjlighet.
+
+
+
+## Styling av formulär
+
+När vi designar formulärfält vill vi att de olika fälten ser likadana ut. Vi ska i denna del av övningen titta på hur vi kan designa formulärfält som är enhetligt designade i olika webbläsare. Hur vi lägger till genomtänkta förifyllda värden och hur vi tydligt visar för användaren vilket fält som är i fokus.
+
+Vi börjar med den enhetliga stylingen. Vi börjar med att definiera klassen `.input` då kan vi använda klassen när vi vill ge styling till element. Vi vill som för knapparna ha ett mjukt utseende och rundar därför hörnen på samma sätt som för knapparna. Vi vill ha samma tunna ram runt knappen och vi vill ha samma typsnitt i formulärfälten som på resten av sidan. Vi vill även ha samma bredd på alla formulärfält trots de olika typer och vi specificerar bredden i `rem`. Vi ökar den inre marginalen (padding) så att fälten blir lättare att klicka på. Vi vill även ha ett avstånd mellan formulärfältet och sätter det som `margin-bottom`.
+
+```scss
+.input {
+    font-size: var(--default-font-size);
+    line-height: var(--default-line-height);
+    font-family: var(--default-font);
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 0.2rem;
+    padding: 0.6rem 0.6rem;
+    width: 32rem;
+    max-width: 100%;
+    margin-bottom: var(--default-margin-bottom);
+}
+```
+
+För att använda oss av `:valid` och `:invalid` pseudoklasserna kan vi göra följande. Här sätter vi ramen runt fältet till grön om det validerar och röd om det inte validerar.
+
+```css
+.input:valid {
+    border: 1px solid green;
+}
+
+.input:invalid {
+    border: 1px solid red;
+}
+```
+
+
+
+## Hantera data med formData
+
+När vi har fått till ett bra formulär vill vi även kunna använda datan från formuläret till något. I `order.html` lägger vi först till ett formulär, som i detta fallet enbart innehåller förnamn, e-post och en skicka beställningsknapp. Jag har i CSS-filen valt att dölja formuläret och först visa det när Stripe-betalningen gått igenom, det vill säga när `session.status == 'complete'`.
+
+```html
+<form id="order-form" class="order-form">
+    <label for="firstname">Förnamn</label>
+    <input class="input" type="text" name="firstname" id="firstname" required>
+
+    <label for="email">E-post (fylls i via Stripe)</label>
+    <input class="input" type="email" disabled="disabled" name="email" id="email" required>
+
+    <input type="submit" id="send-order" class="button" value="Skicka beställning">
+</form>
+```
+
+I `order.js` skapar vi en `EventListener` för `submit`-eventet på vårt formulär.
+
+```javascript
+// order.js
+const orderForm = document.getElementById("order-form")
+orderForm.addEventListener("submit", handleSubmit)
+
+async function handleSubmit(event) {
+  event.preventDefault()
+
+  const formData = new FormData(event.target)
+
+  console.log(formData)
+}
+```
+
+Vi kan nu komma åt de enskilda delar av `formData` objektet genom att använda `formData.get("email")` eller `formData.get("firstname")` och därigenom bygga upp ett `orderData`-objekt som vi kan skicka till Lager API:t för att skapa en ny order.
+
+```javascript
+// main.js
+const orderData = {
+    name: formData.get("firstname"),
+    email: formData.get("email"),
+    payment_id: // hämta från sparat instans
+    api_key: auth.api_key,
+}
+```
+
+När vi har skapat en ny order i Lager API:t får vi tillbaka det nya objektet där det finns ett `id` som vi sedan kan använda för att skapa `order_items` som läggs till den ordern vi precis skapat.
+
+```javascript
+// order.js
+for (let product in cart) {
+    const orderItemData = {
+        order_id: newOrderId,
+        product_id: product,
+        amount: cart[product],
+        api_key: auth.api_key,
+    }
+
+    await orders.addOrderItem(orderItemData) // jag valde att skapa en models/orders.js fil för att hantera ordrar
+}
+```
