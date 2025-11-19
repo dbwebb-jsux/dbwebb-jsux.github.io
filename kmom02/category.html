@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="variables.css" id="variables-style" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="views/main.js" type="module" defer></script>
+    <script src="views/mode-selector.js" type="module" defer></script>
+</head>
+<body class="site">
+    <header class="header">
+        <div class="header-content">
+            <p class="header-promo">Köp 3 betala för 2!</p>
+        </div>
+        <select id="mode">
+            <option value="variables.css">Light</option>
+            <option value="variables-dark.css">Dark</option>
+        </select>
+    </header>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html"><img src="assets/logo.png" alt="logo" class="logo"></a>
+            <ul class="nav-menu">
+                <li><a href="category.html">Categories</a></li>
+                <li><a href="#equipment">Equipment</a></li>
+                <li><a href="#promotions">Promotions</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+    <main class="container">
+        <div class="category-list" id="category-list"></div>
+    </main>
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-copyright">© tani25</p>
+        </div>
+    </footer>
+</body>
+</html>
