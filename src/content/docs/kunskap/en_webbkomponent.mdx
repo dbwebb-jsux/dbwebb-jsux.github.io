@@ -3,10 +3,132 @@ title: En webbkomponent
 description: Vi tittar på hur vi kan använda webbkomponenter
 ---
 
+import { Image } from 'astro:assets';
+import webComponents from "../../../assets/web-components-inspector.png";
+
+
+
 ## Förkunskaper
 
 Du bör ha jobbat igenom kmom04, lämnat in och skapat en ny branch `kmom05`. Du kan med fördel göra nedanstående direkt i ditt webshop-repo.
 
 
 
-## 
+## Web komponenter
+
+När vi utvecklar mjukvara är det ett antal olika principer och best-practices som har vunnit mark och som karakteriserar bra mjukvara. Ofta har de lite olika roliga förkortningar och nedan är ett par av de som _web components_ är ett försök på att efterleva.
+
+**DRY**: Do not Repeat Yourself [1]
+
+**SRP**: Single Responsibility Principle [2]
+
+**Encapsulation** [c.f. 3]
+
+Vi vill alltså kapsla in vår kod som har exakt ett (1) ansvarsområde för att kunna återanvända. I denna övningen kommer vi byta ut de enskilda produkterna i produktlistningen mot komponenter, i uppgiften "[Webbshoppen del 5](/uppgifter/webbshoppen_del_5)" gör ni sedan ett liknande arbete för produkterna som ligger i varukorgen.
+
+
+
+## Produktlistningen
+
+Vi vill nu kapsla in all funktionalitet för varje enskild produkt i produktlistningen i en komponent. Jag har i min `views/main.js` en funktion `renderProducts` som skriver ut boxar med produkterna. Ni bör ha något liknande kan dock ligga i andra filer eller se ut på ett annat sätt.
+
+```javascript
+// main.js
+function renderProducts(products) {
+  return products.map((product) => {
+    return `<div class="product">
+    <img src="${product.image_url}" alt="Album art ${product.name}" />
+    <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
+</div>`
+  }).join("\n")
+}
+```
+
+I koden ovan ser vi att denna koden är väl lämpad för att göras om till en komponent då den återupprepas ett antal gånger med samma kod även om denna koden ligger i en loop (`map()`). Spara undan koden som finns efter `return` för att återanvändas i ett senare skede. Vi ersätter sedan allt med en webbkomponent, som än så länge ser ut som ett helt vanligt HTML-element, förutom att det innehåller ett bindestreck vilket vanliga HTML-element inte gör.
+
+```javascript
+// main.js
+function renderProducts(products) {
+  return products.map((product) => {
+//     return `<div class="product">
+//     <img src="${product.image_url}" alt="Album art ${product.name}" />
+//     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
+// </div>`
+    return `<single-product></single-product>`
+  }).join("\n")
+}
+```
+
+Om vi laddar om förstasidan misstänker jag att det i stor utsträckning blir helt tomt på förstasidan av din webbshop, men tar vi en titt i View Source eller inspect ser det annorlunda ut.
+
+<Image src={webComponents} alt="Single Product Web Components with no functionality" />
+
+Vi vill nu skicka med data till komponenten så vi har möjlighet att faktiskt visa upp något vettigt. Vi använder `JSON.stringify` för att göra om ett objekt med de attribut vi behöver i komponenten till en sträng, som vi sedan i komponentens kod kan göra en `JSON.parse` av för att få värdena som ett objekt.
+
+```javascript
+// main.js
+function renderProducts(products) {
+  return products.map((product) => {
+//     return `<div class="product">
+//     <img src="${product.image_url}" alt="Album art ${product.name}" />
+//     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
+// </div>`
+    return `<single-product product='${JSON.stringify({ 
+      id: product.id, 
+      name: product.name, 
+      image_url: product.image_url,
+    })}'></single-product>`
+  }).join("\n")
+}
+```
+
+Låt oss nu registrera komponenten och skapa en JavaScript klass ([Dokumentation för class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)) som behövs för att vi kan lägga till funktionalitet för komponenten.
+
+Högst upp i `views/main.js` lägger jag till att jag importerar en komponent och sedan registrerar den genom att koppla den till komponentens namn i detta fallet `single-product`, som vi använde ovan.
+
+```javascript
+// main.js
+import SingleProduct from "../components/single-product.js";
+
+customElements.define('single-product', SingleProduct);
+```
+
+Vi skapar sedan katalogen `components` och filen `components/single-product.js` som vi fyller med följande kod från första början. I koden skapar vi först klassen SingleProduct som ärver från prototypen `HTMLElement`. Detta gör att vi kan komma åt attribut som `this.innerHTML` och att våra komponenter är som ett "riktigt" HTML-element i våra sidor. Vi exporterar direkt klassen som vår `default`-export från filen. I alla komponenter som vi skapar vill vi ha instansmetoden `connectedCallback`, den funktionen är en livs-cykel funktion ([Custom element lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks)) som anropas när en komponent läggs till i dokumentet.
+
+Vår kod gör sedan inte mycket mer än att sätta att `innerHTML` för vårt element är ett stycke med texten produkt. Om du laddar om sidan nu, bör du alltså nu se så många stycken med texten Produkt som du har produkter i Lager-API:t.
+
+```javascript
+// components/single-product.js
+export default class SingleProduct extends HTMLElement {
+    // connect component
+    connectedCallback() {
+        this.innerHTML = `<p>Produkt</p>`;
+    }
+}
+```
+
+För att vi ska få till nån sorts funktionalitet i komponenten och på vår sida lägger vi till ett antal andra metoder. Först `observedAttributes` som definierar vilka attribut vi kunna hämta data ifrån, utöver de som i vanliga fall definieras för ett HTML-element till exempel `class`, `id` osv. Sedan skapar vi en getter-funktion som gör `JSON.parse` på produkten som vi tidigare skickade med till komponenten.
+
+I `connectedCallback` använder vi sedan den kod som vi tidigare hade i `renderProducts`, men byter ut `product` mot `this.product` för att referera tillbaka mot klassen getter-funktion `product()`.
+
+```javascript
+// components/single-product.js
+export default class SingleProduct extends HTMLElement {
+    static get observedAttributes() {
+        return ['product'];
+    }
+
+    get product() {
+        return JSON.parse(this.getAttribute("product"));
+    }
+
+    connectedCallback() {
+        this.innerHTML = `<div class="product">
+          <img src="${this.product.image_url}" alt="Album art ${this.product.name}" />
+          <div class="bottom"><p>${this.product.name}</p><span class="add-to-cart" id="${this.product.id}">+</span></div>    
+        </div>`;
+    }
+}
+```
+
+Vi bör nu kunna se våra produkter på första sidan av vår webbshop.
