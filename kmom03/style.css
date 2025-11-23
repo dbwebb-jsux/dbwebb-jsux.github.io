@@ -117,10 +117,17 @@ html, body {
     font-weight: 700;
     font-size: 20px;
     font-family: var(--header-font);
+    transition: all 0.2s ease;
 }
 
 .nav-menu a:hover {
     color: var(--text-color);
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+.nav-right {
+    margin-left: auto;
 }
 
 .banner {
@@ -173,6 +180,7 @@ html, body {
     display: flex;
     flex-direction: column;
     margin: 0;
+    position: relative;
 }
 
 .product img {
@@ -235,8 +243,8 @@ html, body {
 
   .category-title {
     text-align: left;
-    border-right: none; /* Remove the side border */
-    border-bottom: 2px solid var(--border-color); /* Add a bottom border */
+    border-right: none; 
+    border-bottom: 2px solid var(--border-color); 
     padding-right: 0;
     padding-bottom: 1rem;
   }
