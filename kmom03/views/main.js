@@ -1,7 +1,6 @@
 import auth from "../models/auth.js"
 import { instantiateCartButtons } from "./cart.js"
 
-//comment för att göra en change så jag kan recommit och deploy
 
 function extractBandName(description) {
   if (!description) return "Unknown Artist"
