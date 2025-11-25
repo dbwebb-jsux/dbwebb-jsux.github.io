@@ -43,6 +43,41 @@ function addToCart(event) {
   }
 }
 
+
+function removeFromCart(event) {
+  const productID = event.target.id.replace("remove-", "")
+  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
+  
+  delete cart[productID]
+  localStorage.setItem("cart", JSON.stringify(cart))
+  
+  renderCartProducts()
+}
+
+function increaseQuantity(event) {
+  const productID = event.target.id.replace("increase-", "")
+  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
+  
+  cart[productID] = (cart[productID] || 1) + 1
+  localStorage.setItem("cart", JSON.stringify(cart))
+  
+  renderCartProducts()
+}
+
+function decreaseQuantity(event) {
+  const productID = event.target.id.replace("decrease-", "")
+  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
+  
+  if (cart[productID] > 1) {
+    cart[productID] -= 1
+  } else {
+    delete cart[productID]
+  }
+  localStorage.setItem("cart", JSON.stringify(cart))
+  
+  renderCartProducts()
+}
+
 async function renderCartProducts() {
   let cartHTML = "<p>No products in cart.</p>"
   if (localStorage.getItem("cart")) {
@@ -83,40 +118,6 @@ async function renderCartProducts() {
   document.querySelectorAll(".qty-btn.decrease").forEach(btn => {
     btn.addEventListener("click", decreaseQuantity)
   })
-}
-
-function removeFromCart(event) {
-  const productID = event.target.id.replace("remove-", "")
-  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
-  
-  delete cart[productID]
-  localStorage.setItem("cart", JSON.stringify(cart))
-  
-  renderCartProducts()
-}
-
-function increaseQuantity(event) {
-  const productID = event.target.id.replace("increase-", "")
-  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
-  
-  cart[productID] = (cart[productID] || 1) + 1
-  localStorage.setItem("cart", JSON.stringify(cart))
-  
-  renderCartProducts()
-}
-
-function decreaseQuantity(event) {
-  const productID = event.target.id.replace("decrease-", "")
-  let cart = JSON.parse(localStorage.getItem("cart") || "{}")
-  
-  if (cart[productID] > 1) {
-    cart[productID] -= 1
-  } else {
-    delete cart[productID]
-  }
-  localStorage.setItem("cart", JSON.stringify(cart))
-  
-  renderCartProducts()
 }
 
 export { instantiateCartButtons }
