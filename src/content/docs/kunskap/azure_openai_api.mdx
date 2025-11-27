@@ -1,0 +1,104 @@
+---
+title: En varukorg med CSS och JavaScript
+description: Vi skapar en varukorg där vi kan lägga till våra skivor.
+---
+
+## Förkunskaper
+
+Du bör ha jobbat igenom kmom06, lämnat in och skapat en ny branch `kmom06`. Du kan med fördel göra nedanstående direkt i ditt webshop-repo.
+
+
+
+## En API-nyckel till Azure OpenAI's API
+
+I videon nedan visar Emil hur du får en API-nyckel. Efter ett kort tag bör ni få ett mail med API-nyckeln, spara undan den i `models/auth.js` på samma sätt som nyckeln ni har för Lager API:t.
+
+
+
+## Anrop till BTH:s OpenAI API
+
+BTH har ett digitaliseringsråd och dekan Lars Lundberg har i det rådet drivit fram att BTH ska ha möjlighet för att använda LLM's via ett API. På samma sätt som vi gör anrop till Lager API:t kommer vi göra anrop mot OpenAI's API skillnaden blir dock att vi gör det lite mer dynamiskt då vi vill få till ett samtal. I nedanstående exempel utgår jag från en webbkomponent och i det ett input-fält, samt ett element där meddelanden läggs till. Vi använder `keyup` som event i vår kod. Det event skickas i väg varje gång en användare släpper en tangent. Vi kollar sedan om den tangenten som användare släppt är Enter. Är den det anropar vi funktionen `sendMessage`.
+
+```javascript
+export default class ChatWindow extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+        <div id="chat-messages" class="chat-messages"></div>
+        <input type="text" id="new-message" class="input new-message">
+    `
+
+    const newMessage = document.getElementById("new-message")
+    newMessage.addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+            this.sendMessage(event.target)
+        }        
+    })
+  }
+
+  async sendMessage(element) {
+    const chatMessages = document.getElementById("chat-messages")
+    console.log(element.value)
+  }
+}
+```
+
+Vi lägger sedan till användarens meddelande till i det element som visar chatt-meddelanden och nollställer vårt input-fält. Sedan bygger vi upp den data som vi vill skicka till systemet. Först definierar vi vilken roll vi vill att LLM'n ska ha genom att säga `role: "system"` här väljer jag att lägga in URL'n till min webbshop. Sedan använder vi `role: "user"` för att säga att ni är det ett meddelande från en användare och där har vi sedan meddelandet från input-fältet. Testa er gärna fram till en bra prompt för rollen på systemet, det brukar spela stor roll hur man skriver den prompten.
+
+```javascript
+async sendMessage(element) {
+  const chatMessages = document.getElementById("chat-messages")
+  const message = element.value
+  chatMessages.innerHTML += `<p class="user-message">${message}</p>`
+  element.value = ""    
+
+  const data = {
+      messages: [
+          {
+              role: "system",
+              content: "Du är en hjälpsam kundtjänst chatt för webbshoppen URL",
+          },
+          {
+              role: "user",
+              content: message,
+          },
+      ]
+  }
+}
+```
+
+Den sista delen av funktionen handlar om att skicka iväg en förfrågan till OpenAI API:t. Vi gör det som tidigare med en fetch med metoden POST. I detta fallet skickar vi med API-nyckeln som en header. När vi fått tillbaka ett svar (kan ta en liten stund) så lägger vi till den i chat-messages-elementet. 
+
+```javascript
+async sendMessage(element) {
+  const chatMessages = document.getElementById("chat-messages")
+  const message = element.value
+  chatMessages.innerHTML += `<p class="user-message">${message}</p>`
+  element.value = ""    
+
+  const data = {
+      messages: [
+          {
+              role: "system",
+              content: "Du är en hjälpsam kundtjänst chatt för webbshoppen URL",
+          },
+          {
+              role: "user",
+              content: message,
+          },
+      ]
+  }
+
+  const response = await fetch(
+    "https://bth-ai.azure-api.net/student/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview", {
+        body: JSON.stringify(data),
+        headers: {
+            'content-type': 'application/json',
+            'api-key': process.env.OPENAI_API_KEY
+        },
+        method: 'POST'
+    })
+  const result = await response.json()
+
+  chatMessages.innerHTML += `<p class="ai-message">${result.choices[0].message.content}</p>`
+}
+```

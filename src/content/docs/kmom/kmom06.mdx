@@ -1,13 +1,17 @@
 ---
-title: ⚠️ kmom06 - AI
-description: Kursmoment 2
+title: kmom06 - AI
+description: Kursmoment 6
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { YouTube } from 'astro-embed';
+import { Image } from 'astro:assets';
+import azureopenai from "../../../assets/azureopenai.webp";
 
+I kursmomentet tittar vi på hur vi kan använda AI för att skapa en kundtjänstchatt.
 
-<Aside type="caution">Kursmomentet är under utveckling. Påbörja först när rutan är borta.</Aside>
+<Image src={azureopenai} alt="Azure and OpenAI logos" />
 
+I videon nedan visar Emil hur det kan se ut när vi är klara med kmom06.
 
 
 ### En branch för kmom06
@@ -23,6 +27,10 @@ git checkout -b kmom06
 ## Läsa & titta
 
 ### Kurslitteratur
+
+I kursen används [Designing interfaces: patterns for effective interaction design](https://go.exlibris.link/zrLb9rwc) skriven av Tidwell J, Brewer C, Valencia A som kurslitteratur. Boken är tillgänglig som e-bok via biblioteket.
+
+Läs kapitlet "11. User Interface Systems and Atomic Design".
 
 
 
@@ -40,5 +48,31 @@ Onsdag eftermiddag håller Kenneth, Mattias och Emil en gemensam föreläsning, 
 
 ## Öva
 
+<p class="time">(Ungefär 6 studietimmar)</p>
 
-## Kravspecifikation
+* Gör övningen [Azure OpenAI API](/kunskap/azure_openai_api).
+
+
+
+## Uppgifter
+
+<p class="time">(Ungefär 6 studietimmar)</p>
+
+* Gör uppgiften "[Chilla lite](/uppgifter/chilla_lite)" enligt kravspecifikationen och lämna in enligt nedan.
+
+* Gör uppgiften "[Webbshoppen del 6](/uppgifter/webbshoppen_del_6)" enligt kravspecifikationen och lämna in enligt nedan.
+
+Gör din inlämning som en Pull Request enligt instruktionen i kmom01.
+
+
+
+## Reflektera
+
+<p class="time">(Ungefär 1 studietimme)</p>
+
+Som en del av din inlämning via GitHub svara på nedanstående frågor. Se till att du skriver 5-8 meningar per fråga om dina lärdomar och reflektioner. Vi vill inte läsa vad ChatGPT, Claude eller Copilot har för reflektioner, men vad ni har lärt er under veckan.
+
+* Vilken nytta ser du med Design Systems och Atomic Design ?
+* Upplever du API sättet att kommunicera med OpenAI's LLMs som ett sätt som öppnar möjligheter för dig som webbprogrammerare?
+* Vilken är din TIL för detta kmom?
+* Vilken är din ITCIL (In This Course I Learned) för kursen som helhet?
