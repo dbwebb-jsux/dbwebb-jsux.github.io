@@ -72,7 +72,7 @@ Den sista delen av funktionen handlar om att skicka iväg en förfrågan till Op
 async sendMessage(element) {
   const chatMessages = document.getElementById("chat-messages")
   const message = element.value
-  chatMessages.innerHTML += `<p class="user-message">${message}</p>`
+  chatMessages.innerHTML += `<p>${message}</p>`
   element.value = ""    
 
   const data = {
@@ -99,6 +99,6 @@ async sendMessage(element) {
     })
   const result = await response.json()
 
-  chatMessages.innerHTML += `<p class="ai-message">${result.choices[0].message.content}</p>`
+  chatMessages.innerHTML += `<p>${result.choices[0].message.content}</p>`
 }
 ```
