@@ -173,6 +173,7 @@ För att använda oss av `:valid` och `:invalid` pseudoklasserna kan vi göra f�
 När vi har fått till ett bra formulär vill vi även kunna använda datan från formuläret till något. I `order.html` lägger vi först till ett formulär, som i detta fallet enbart innehåller förnamn, e-post och en skicka beställningsknapp. Jag har i CSS-filen valt att dölja formuläret och först visa det när Stripe-betalningen gått igenom, det vill säga när `session.status == 'complete'`.
 
 ```html
+<!-- order.html -->
 <form id="order-form" class="order-form">
     <label for="firstname">Förnamn</label>
     <input class="input" type="text" name="firstname" id="firstname" required>
@@ -203,7 +204,7 @@ async function handleSubmit(event) {
 Vi kan nu komma åt de enskilda delar av `formData` objektet genom att använda `formData.get("email")` eller `formData.get("firstname")` och därigenom bygga upp ett `orderData`-objekt som vi kan skicka till Lager API:t för att skapa en ny order.
 
 ```javascript
-// main.js
+// order.js
 const orderData = {
     name: formData.get("firstname"),
     email: formData.get("email"),
