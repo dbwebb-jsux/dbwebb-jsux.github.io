@@ -90,9 +90,9 @@ Högst upp i `views/main.js` lägger jag till att jag importerar en komponent oc
 
 ```javascript
 // main.js
-import SingleProduct from "../components/single-product.js";
+import SingleProduct from "../components/single-product.js"
 
-customElements.define('single-product', SingleProduct);
+customElements.define('single-product', SingleProduct)
 ```
 
 Vi skapar sedan katalogen `components` och filen `components/single-product.js` som vi fyller med följande kod från första början. I koden skapar vi först klassen SingleProduct som ärver från prototypen `HTMLElement`. Detta gör att vi kan komma åt attribut som `this.innerHTML` och att våra komponenter är som ett "riktigt" HTML-element i våra sidor. Vi exporterar direkt klassen som vår `default`-export från filen. I alla komponenter som vi skapar vill vi ha instansmetoden `connectedCallback`, den funktionen är en livs-cykel funktion ([Custom element lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks)) som anropas när en komponent läggs till i dokumentet.
@@ -104,7 +104,7 @@ Vår kod gör sedan inte mycket mer än att sätta att `innerHTML` för vårt el
 export default class SingleProduct extends HTMLElement {
     // connect component
     connectedCallback() {
-        this.innerHTML = `<p>Produkt</p>`;
+        this.innerHTML = `<p>Produkt</p>`
     }
 }
 ```
@@ -117,20 +117,30 @@ I `connectedCallback` använder vi sedan den kod som vi tidigare hade i `renderP
 // components/single-product.js
 export default class SingleProduct extends HTMLElement {
     static get observedAttributes() {
-        return ['product'];
+        return ['product']
     }
 
     get product() {
-        return JSON.parse(this.getAttribute("product"));
+        return JSON.parse(this.getAttribute("product"))
     }
 
     connectedCallback() {
         this.innerHTML = `<div class="product">
           <img src="${this.product.image_url}" alt="Album art ${this.product.name}" />
           <div class="bottom"><p>${this.product.name}</p><span class="add-to-cart" id="${this.product.id}">+</span></div>    
-        </div>`;
+        </div>`
     }
 }
 ```
 
 Vi bör nu kunna se våra produkter på första sidan av vår webbshop.
+
+
+
+## Referenser
+
+[1] Thomas, D., & Hunt, A. (2019). The pragmatic programmer. Addison-Wesley Professional.
+
+[2] Martin, R. C. (2009). Clean code: a handbook of agile software craftsmanship. Pearson Education.
+
+[3] Snyder, A. (1986, June). Encapsulation and inheritance in object-oriented programming languages. In Conference proceedings on Object-oriented programming systems, languages and applications (pp. 38-45).
