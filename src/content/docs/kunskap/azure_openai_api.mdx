@@ -90,16 +90,15 @@ async sendMessage(element) {
       ]
   }
 
-  const response = await fetch(
-    "https://bth-ai.azure-api.net/student/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview", {
+    const response = await fetch("https://bth-ai.azure-api.net/student/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview", {
         body: JSON.stringify(data),
         headers: {
             'content-type': 'application/json',
-            'api-key': process.env.OPENAI_API_KEY
+            'api-key': auth.openai_api_key
         },
         method: 'POST'
     })
-  const result = await response.json()
+    const result = await response.json()
 
   chatMessages.innerHTML += `<p>${result.choices[0].message.content}</p>`
 }
