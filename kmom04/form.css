@@ -84,3 +84,61 @@
     font-weight: bold;
     margin-bottom: 1.5rem;
 }
+
+@media (max-width: 768px) {
+  .input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 16px;
+  }
+
+  .order-form {
+    max-width: 100%;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+  }
+
+  .order-form::before {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .order-form label {
+    font-size: 0.95rem;
+  }
+
+  #send-order {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .input {
+    width: 100%;
+    padding: 0.4rem;
+    font-size: 16px;
+  }
+
+  .order-form {
+    max-width: 100%;
+    margin: 1rem auto 0;
+    padding: 0 0.75rem;
+  }
+
+  .order-form::before {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .order-form label {
+    font-size: 0.85rem;
+  }
+
+  #send-order {
+    width: 100%;
+    padding: 0.4rem;
+    font-size: 0.9rem;
+  }
+}

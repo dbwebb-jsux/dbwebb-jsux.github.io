@@ -184,7 +184,7 @@ html, body {
 }
 
 .product img {
-    width: 100%;
+    width: 150px;
     height: 150px;
     object-fit: cover;
 }
@@ -236,6 +236,65 @@ html, body {
 }
 
 @media (max-width: 768px) {
+  .header {
+    height: 40px;
+  }
+
+  .header-promo {
+    font-size: 12px;
+  }
+
+  #mode {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .nav-container {
+    max-width: 100%;
+    gap: 15px;
+    padding: 0 10px;
+  }
+
+  .logo {
+    height: 35px;
+  }
+
+  .nav-menu {
+    gap: 15px;
+  }
+
+  .nav-menu a {
+    font-size: 14px;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    overflow: visible;
+    max-height: none;
+  }
+
+  .product {
+    flex: none;
+    width: 150px;
+    height: auto;
+  }
+
+  .product img {
+    height: 150px;
+    width: 150px;
+  }
+
+  .product-text {
+    font-size: 14px;
+  }
+
   .category-row {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -243,9 +302,71 @@ html, body {
 
   .category-title {
     text-align: left;
-    border-right: none; 
-    border-bottom: 2px solid var(--border-color); 
     padding-right: 0;
     padding-bottom: 1rem;
+    border-right: none;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 1.2rem;
+  }
+
+  .cart {
+    font-size: 1.5rem;
+    padding: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    height: 35px;
+  }
+
+  .header-promo {
+    font-size: 10px;
+  }
+
+  #mode {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .nav-container {
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  .logo {
+    height: 30px;
+  }
+
+  .nav-menu {
+    gap: 10px;
+  }
+
+  .nav-menu a {
+    font-size: 12px;
+  }
+
+  .product {
+    flex: 0 0 100px;
+    width: 100px;
+  }
+
+  .product img {
+    height: 100px;
+    width: 100px;
+  }
+
+  .product-text {
+    font-size: 12px;
+  }
+
+  .products-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .cart {
+    font-size: 1.2rem;
+    padding: 0.3rem;
   }
 }
