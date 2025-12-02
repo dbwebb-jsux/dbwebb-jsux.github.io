@@ -1,5 +1,3 @@
-/* global Stripe */
-
 import auth from "../models/auth.js"
 import products from "../models/products.js"
 
