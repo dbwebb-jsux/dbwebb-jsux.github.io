@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>webshop</title>
+
+    <link rel="stylesheet" href="variables.css" id="variables-style" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="cart.css" />
+    <link rel="stylesheet" href="form.css" />
+
+    <script src="https://js.stripe.com/clover/stripe.js"></script>
+    <script src="views/mode-selector.js" type="module" defer></script>
+    <script src="views/cart.js" type="module" defer></script>
+    <script src="views/order.js" type="module" defer></script>
+</head>
+<body class="site">
+    <div class="cart-content" id="cart-content">
+        <div class="cart-header">
+            <h3>Inköpsvagn</h3>
+            <p class="close-cart" id="close-cart">x</p>
+        </div>
+        <div class="cart-products" id="cart-products"></div>
+    </div>
+    <header class="header">
+        <div class="header-content">
+            <p class="header-promo">Köp 3 betala för 2!</p>
+        </div>
+        <select id="mode">
+            <option value="variables.css">Light</option>
+            <option value="variables-dark.css">Dark</option>
+        </select>
+    </header>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html"><img src="assets/logo.png" alt="logo" class="logo"></a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="category.html">Categories</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="cart" id="cart">🛒</div>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        <form id="order-form" class="order-form">
+            <label for="firstname">First Name</label>
+            <input class="input" type="text" name="firstname" id="firstname" required>
+
+            <label for="email">Email</label>
+            <input class="input" type="email" name="email" id="email" required>
+
+            <label for="address">Address</label>
+            <input class="input" type="text" name="address" id="address" required>
+
+            <label for="phone">Phone Number</label>
+            <input class="input" type="tel" name="phone" id="phone" required>
+
+            <input type="submit" id="send-order" class="button" value="Submit Order">
+        </form>
+        <div id="checkout"></div>
+        <div id="order-confirmation" style="display: none;"></div>
+    </main>
+</body>
+</html>

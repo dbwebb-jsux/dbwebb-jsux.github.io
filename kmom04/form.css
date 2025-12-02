@@ -1,0 +1,86 @@
+.input {
+    font-size: var(--default-font-size);
+    line-height: var(--default-line-height);
+    font-family: var(--default-font);
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 0.2rem;
+    padding: 0.6rem 0.6rem;
+    width: 32rem;
+    max-width: 100%;
+    margin-bottom: var(--default-margin-bottom);
+}
+
+.input:valid {
+    border: 1px solid green;
+}
+
+.input:invalid {
+    border: 1px solid red;
+}
+
+#order-confirmation {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background-color: var(--background-color);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.confirmation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.confirmation-section {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+}
+
+.confirmation-section h3 {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.confirmation-item {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background-color: #f9f9f9;
+    border-radius: 0.25rem;
+    color: #000;
+}
+
+.confirmation-item p {
+    margin: 0.1rem 0;
+    font-size: 0.8rem;
+}
+
+#order-confirmation h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+#order-confirmation p {
+    margin: 0.1rem 0;
+    font-size: 0.8rem;
+}
+
+.order-form {
+    max-width: 32rem;
+    margin: 2rem auto 0;
+}
+
+.order-form::before {
+    content: "Customer Info";
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}

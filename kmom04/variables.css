@@ -1,0 +1,12 @@
+:root {
+    --header-color: #261819;
+    --text-color: #2b2522 ;
+    --background-color: #D0C0B3;
+    --border-color: #2b2522;
+    --main-font: "Open Sans", sans-serif;
+    --header-font: "Open Sans", sans-serif;
+    --text-font: serif;
+    --default-font-size: 1rem;
+    --default-margin-bottom: 1rem;
+
+}

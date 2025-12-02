@@ -1,0 +1,205 @@
+.add-to-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #d3d3d3;
+    color: #2b2522;
+    border-radius: 0;
+    font-size: 1.5rem;
+    width: 3ch;
+    height: 3ch;
+    cursor: pointer;
+    border: 1px solid #2b2522;
+    padding: 0;
+    position: absolute;
+    bottom: auto;
+    top: 110px;
+    right: 0;
+    left: auto;
+    transition: all 0.2s ease;
+}
+
+.add-to-cart:hover {
+    transform: scale(1.1);
+}
+
+.add-to-cart:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cart-plus {
+    font-size: 1.2rem;
+    font-weight: bold;
+    position: absolute;
+    left: 0.3rem;
+    top: -0.1rem;
+}
+
+.cart {
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    background-color: #d3d3d3;
+    color: #2b2522;
+}
+
+.cart:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+.cart:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cart-content {
+    display: none;
+    position: fixed;
+    top: 1vh;
+    right: 0;
+    height: auto;
+    max-height: 80vh;
+    width: 20vw;
+    background-color: var(--background-color);
+    border-top-left-radius: 1.75rem;
+    border-bottom-left-radius: 1.75rem;
+    padding: 1.75rem;
+    z-index: 1;
+    box-shadow: -4px 4px 20px 0 rgba(0 0 0 / 75%);
+    overflow-y: auto;
+}
+
+.cart-content.active {
+    display: block;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.close-cart {
+    cursor: pointer;
+    font-size: 2rem;
+    padding: 0;
+    line-height: 1;
+    position: absolute;
+    left: 0;
+    top: -2.5rem;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--text-color);
+}
+
+.cart-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-info p {
+    margin: 0.25rem 0;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+ qty-btn {
+    background: none;
+    border: 1px solid var(--text-color);
+    color: var(--text-color);
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-item {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cart-products > a {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #d3d3d3;
+    color: #2b2522;
+    border: 1px solid #2b2522;
+    border-radius: 0.25rem;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#cart-products > a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#cart-products > a:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.button[href="order.html"] {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #d3d3d3;
+    color: #2b2522;
+    border: 1px solid #2b2522;
+    border-radius: 0.25rem;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button[href="order.html"]:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.button[href="order.html"]:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
