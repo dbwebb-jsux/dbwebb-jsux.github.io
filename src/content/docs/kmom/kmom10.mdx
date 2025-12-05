@@ -1,6 +1,6 @@
 ---
-title: ⚠️ kmom10 - projekt
-description: Kursmoment 2
+title: kmom10 - projekt
+description: Avslutande projekt
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -17,41 +17,80 @@ Börja kmom10 med att skapa branchen `kmom10`.
 git checkout -b kmom10
 ```
 
+
+
+## Genomgång av projektet med Emil
+
+Video med genomgång av projektet laddas upp här.
+
+
+
 ## Projektets upplägg
 
-Välj minst 2 av 4 krav för att få godkänt. Tillsammans med poängen för de kmom01-kmom06 
+Välj minst 2 av 4 krav för att få godkänt. Tillsammans med poängen för kmom01-kmom06 (totalt max 40 poäng) utgör de bedömningsunderlag för kursens slutbetyg, se [översikten över bedömning och slutbetyg](/#slutbetyg).
+
+För varje krav dokumentera tydligt i din redovisningstext på GitHub enligt specifikationen i kravet. Vår rättning av projektet utgår från din redovisningstext.
 
 
 
+## Krav 1: Designförbättring (15 poäng)
 
-## Krav 1: Perfekt design (15 poäng)
-
-Beskriv din process.
-
-
-
-## Krav 2: Felhantering (15 poäng)
-
-Ha nån artikel om hur det kan göras.
-
-Beskriv hur du har hanterat olika fel som kan uppstå.
+Krav 1 är uppdelat i två delar.
 
 
 
-## Krav 3: Responsivitet (15 poäng)
+### Krav 1A: Förbättring
 
-Ha nån artikel om hur det kan göras.
-
-Beskriv tillvägagångssätt.
+Välj ut fem delar av din webbshop du vill förbättra design och utseende på. Använd detta som ett sätt att få till de små detaljer som förbättrar helheten. Dokumentera under rubriken **KRAV 1A** i din redovisningstext med före och efter bilder samt en beskrivning av ditt designtänk på de fem delarna du förbättrat.
 
 
 
-## Krav 1: Analys (15 poäng)
+### Krav 1B: Nya teman
 
-Färg och typsnitt
+Skapa sidor för de tre kategorier av musikalbum som du inte valde för `category.html` och på dessa sidor skapa ett passande tema som fungerar i både Light och Dark-mode. Ändra både färg och typsnitt för de olika kategorierna. Dokumentera under rubriken **KRAV 1B** i din redovisningstext val av typsnitt och färgpalett för de tre nya kategori-sidorna.
 
-Filer som laddas ner.
+Tips från coachen: Använd variabler som i kmom02 och döp de till de olika kategorierna.
 
-Tillgänglighet och Google Lighthouse.
 
-För 3 sidor för 3 nya webbplatser på ett tema. Skriv om reflektioner 
+
+## Krav 2: Analys (15 poäng)
+
+Gör en analys liknande den vi gjort tidigare i kursen där du använder samma mall. Skriv rapporten i `reports/kmom10.md`.
+
+Välj tre (3) webbplatser, du behöver inte begränsas av tidigare kategorin webbshoppar. Beskriv ditt urval och hur du resonerat kring urvalet.
+
+Analysera sedan 3 sidor från varje webbplats (totalt 9 sidor) avseende.
+
+* Färg och typsnitt (kmom02).
+
+* Filer som laddas ner (kmom04).
+
+* Tillgänglighet och Google Lighthouse (kmom05).
+
+Skriv under rubriken **KRAV 2** i redovisningstexten att du gjort kravet.
+
+
+
+## Krav 3: Felhantering (15 poäng)
+
+En stor del av en användarens upplevelse är när saker går fel. Lägg till felhantering i din webbshop för följande delar:
+
+* Felhantering av alla API-anrop till Lager-API:t och OpenAI-API:t med hjälp av `try-catch` för fetch. Se exempel på detta [Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Visa tydligt för användare om anropen går fel.
+
+* När produkter läggs till i varukorgen får antal produkter inte överstiga lagersaldot. Lagersaldot finns som `stock` attributet på alla produkter från API:t. Se till att tydligt skriva ut/förhindra användaren i att beställa fler produkter än det finns i API:t. 
+
+Beskriv under rubriken **KRAV 3** i din redovisningstext hur du gick tillväga och hur 
+
+
+
+## Krav 4: Responsivitet (15 poäng)
+
+Använd dina kunskaper från webtec-kursen för att göra en webbplats som fungerar på ett bra sätt på enheter i alla storlekar. Använd `media-queries` på ett bra sätt i din CSS-kod. För att anpassa bilder till olika stora enheter kan artikeln [Responsiva bilder](/kunskap/responsiva-bilder) ge ett antal tips.
+
+Dokumentera ditt tillvägagångssätt under rubriken **Krav 4** i din redovisningstext.
+
+
+
+## Redovisning
+
+Spela in en redovisningsvideo där du berättar om ditt tillvägagångssätt för att implementera de olika kraven du har valt. Visa både funktionalitet och koden bakom. Bifoga videon i din inlämning via ett PR på GitHub.

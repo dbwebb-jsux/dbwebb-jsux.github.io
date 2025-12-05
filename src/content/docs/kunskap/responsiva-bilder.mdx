@@ -1,0 +1,37 @@
+---
+title: Responsiva bilder
+description: En kort artikel om hur vi kan anpassa bilder till olika enheter.
+---
+
+I artikeln nedan beskrivs hur vi kan anpassa bilder till olika enheter.
+
+
+## Olika bilder för olika enheter
+
+Mobila enheters framtåg de senaste drygt 15 åren gör att man som utvecklare måste vara uppmärksam på vilken variant av en bild man använder för enheter av olika storlekar. För att ytterligare komplicera denna process är pixeldensiteten för många mobila enheter samt för många bärbara datorer mycket stor.
+
+För att bilder inte ska bli suddiga på enheter med stor pixeldensitet kan vi med hjälp av `srcset` attributet definiera vilken variant av en bild vi vill visa beroende på pixeldensiteten på den enhet som används.
+
+```html
+<img src="sheep.jpg" class="max-width" srcset="sheep@2x.jpg 2x" alt="sheep" />
+```
+
+I ovanstående kodexempel anger vi att vi vill visa bilden `sheep.jpg`, men för enheter med dubbel pixeldensitet (2x) vill vi visa bilden `sheep@2x.jpg` istället.
+
+
+
+## Art direction
+
+Vi har nu möjlighet för att använda olika varianter av samma bild beroende på pixeldensitet, men ofta vill man visa olika beroende på enhetens storlek och orientering. Då en mobil enhet ofta används i stående orientering och en dator liggande orientering vill vi ha en möjlighet för att visa olika delar av samma bild beroende på storleken på användarens enhet.
+
+Detta kan vi göra med hjälp av `picture` som i det följande exemplet.
+
+```html
+<picture>
+    <source media="(min-width: 668px)" srcset="sheep.jpg, sheep@2x.jpg 2x">
+    <source media="(min-width: 376px)" srcset="sheep-small-landscape.jpg">
+    <img src="sheep-small-portrait.jpg" class="max-width" alt="sheep">
+</picture>
+```
+
+I ovanstående exempel visar vi 4 olika bilder beroende på bredden på användarens enhet och pixeldensitet. Som utgångspunkt visar vi bilden `sheep-small-portrait.jpg`. Har enheten en minimumsbredd på 376px använder vi bilden `sheep-small-landscape.jpg`. Har enheten en minimumsbredd på 668px använder vi antigen `sheep.jpg` eller `sheep@2x.jpg` beroende på pixeldensiteten.
