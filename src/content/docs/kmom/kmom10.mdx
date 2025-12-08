@@ -3,9 +3,10 @@ title: kmom10 - projekt
 description: Avslutande projekt
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { YouTube } from 'astro-embed';
 
-<Aside type="caution">Kursmomentet är under utveckling. Påbörja först när rutan är borta.</Aside>
+I projektet bygger vi vidare på webbshoppen. Vi försöker få till "the finishing touches", de små detaljer som skapar helheten.
+
 
 
 ### En branch för kmom10
@@ -21,7 +22,7 @@ git checkout -b kmom10
 
 ## Genomgång av projektet med Emil
 
-Video med genomgång av projektet laddas upp här.
+<YouTube posterQuality="max" id="Z_WDdrUBV-U" />
 
 
 
@@ -35,7 +36,7 @@ För varje krav dokumentera tydligt i din redovisningstext på GitHub enligt spe
 
 ## Krav 1: Designförbättring (15 poäng)
 
-Krav 1 är uppdelat i två delar.
+Krav 1 är uppdelat i två delar 1A och 1B.
 
 
 
@@ -47,9 +48,9 @@ Välj ut fem delar av din webbshop du vill förbättra design och utseende på. 
 
 ### Krav 1B: Nya teman
 
-Skapa sidor för de tre kategorier av musikalbum som du inte valde för `category.html` och på dessa sidor skapa ett passande tema som fungerar i både Light och Dark-mode. Ändra både färg och typsnitt för de olika kategorierna. Dokumentera under rubriken **KRAV 1B** i din redovisningstext val av typsnitt och färgpalett för de tre nya kategori-sidorna.
+Skapa sidor för de tre kategorier av musikalbum som du inte valde för `category.html` i kmom02. På dessa sidor skapa ett passande tema som fungerar i både Light och Dark-mode. Ändra både färg, typsnitt och till dels layout för de olika kategorierna. Dokumentera under rubriken **KRAV 1B** i din redovisningstext val av typsnitt och färgpalett för de tre nya kategori-sidorna.
 
-Tips från coachen: Använd variabler som i kmom02 och döp de till de olika kategorierna.
+_**Tips från coachen:** Använd variabler som i kmom02 och döp de till de olika kategorierna._
 
 
 
@@ -67,7 +68,7 @@ Analysera sedan 3 sidor från varje webbplats (totalt 9 sidor) avseende.
 
 * Tillgänglighet och Google Lighthouse (kmom05).
 
-Skriv under rubriken **KRAV 2** i redovisningstexten att du gjort kravet.
+Skriv under rubriken **KRAV 2** i redovisningstexten att du gjort kravet och om du lärde dig något specifikt under arbetet med analysen.
 
 
 
@@ -75,9 +76,9 @@ Skriv under rubriken **KRAV 2** i redovisningstexten att du gjort kravet.
 
 En stor del av en användarens upplevelse är när saker går fel. Lägg till felhantering i din webbshop för följande delar:
 
-* Felhantering av alla API-anrop till Lager-API:t och OpenAI-API:t med hjälp av `try-catch` för fetch. Se exempel på detta [Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Visa tydligt för användare om anropen går fel.
+* Felhantering av alla API-anrop till Lager-API:t och OpenAI-API:t med hjälp av `try-catch` för fetch. Se exempel på detta [Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Visa tydligt för användare om anropen går fel. Testa både genom att inte ha internet uppkoppling efter sidan laddats och genom att skicka felformaterat data.
 
-* När produkter läggs till i varukorgen får antal produkter inte överstiga lagersaldot. Lagersaldot finns som `stock` attributet på alla produkter från API:t. Se till att tydligt skriva ut/förhindra användaren i att beställa fler produkter än det finns i API:t. 
+* När produkter läggs till i varukorgen får antal produkter inte överstiga lagersaldot. Lagersaldot finns som `stock` attributet på alla produkter från API:t. Se till att tydligt skriva ut/förhindra användaren i att beställa fler produkter än det finns i API:t.
 
 Beskriv under rubriken **KRAV 3** i din redovisningstext hur du gick tillväga och hur 
 
@@ -92,5 +93,17 @@ Dokumentera ditt tillvägagångssätt under rubriken **Krav 4** i din redovisnin
 
 
 ## Redovisning
+
+Gör en Pull Request från kmom10 branchen mot din egna fork likt tidigare i kursen. Som en del av din Pull Request skriv följande reflektionstext:
+
+1. För varje krav du implementerat skriver du ett textstycke som uppfyller kravet. Poängsättningen tar sin start i din text så se till att skriva väl för att undvika poängavdrag. Missar du att skriva/dokumentera din lösning så blir det 0 poäng. Du kan inte komplettera en inlämning för att få högre betyg. Underlätta för lärarna som rättar genom att ha en rubrik enligt ovan för varje krav du gör.
+
+2. Skriv ett allmänt stycke om hur projektet gick att genomföra. Problem/lösningar/strul/enkelt/svårt/snabbt/lång tid, etc. Var projektet lätt eller svårt? Tog det lång tid? Vad var svårt och vad gick lätt? Var det ett bra och rimligt projekt för denna kursen?
+
+3. Avsluta med ett sista stycke med dina tankar om kursen och vad du anser om materialet och handledningen (ca 5-10 meningar). Ge feedback till lärarna och förslå eventuella förbättringsförslag till kommande kurstillfällen. Är du nöjd/missnöjd? Kommer du att rekommendera kursen till dina vänner/kollegor? På en skala 1-10, vilket betyg ger du kursen?
+
+
+
+## Presentation
 
 Spela in en redovisningsvideo där du berättar om ditt tillvägagångssätt för att implementera de olika kraven du har valt. Visa både funktionalitet och koden bakom. Bifoga videon i din inlämning via ett PR på GitHub.
