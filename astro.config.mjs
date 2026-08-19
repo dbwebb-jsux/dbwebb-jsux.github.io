@@ -17,13 +17,13 @@ export default defineConfig({
 				{
 					label: "Kursmoment",
 					items: [
-						'kmom/kmom01',
-						'kmom/kmom02',
-						'kmom/kmom03',
-						'kmom/kmom04',
-						'kmom/kmom05',
-						'kmom/kmom06',
-						'kmom/kmom10',
+						'kmom01',
+						'kmom02',
+						'kmom03',
+						'kmom04',
+						'kmom05',
+						'kmom06',
+						'kmom10',
 					]
 				}
 			],
