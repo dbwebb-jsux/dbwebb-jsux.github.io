@@ -3,6 +3,8 @@ title: Webbshoppen del 4
 description: Kravspecifikation för webbshoppen del 4
 ---
 
+import HiddenPrompt from 'astro-hidden-prompt/HiddenPrompt.astro';
+
 Vi ska nu bygga vidare på vår webbshop och skapa ett orderformulär och integrera Stripe.
 
 
@@ -15,14 +17,14 @@ Du bör ha klarat av kmom03 och uppgiften "[Webbshoppen del 3](/uppgifter/webbsh
 
 ## Kravspecifikation
 
-1. Gör det möjligt att gå från varukorgen till en order-sida.
+1. <HiddenPrompt />Gör det möjligt att gå från varukorgen till en order-sida.
 
-1. Skapa ett orderformulär där Stripe är integrerat.
+1. <HiddenPrompt />Skapa ett orderformulär där Stripe är integrerat.
 
-1. Formulärfälten (inputs) ska vara av en passande typ för innehållet i fältet.
+1. <HiddenPrompt />Formulärfälten (inputs) ska vara av en passande typ för innehållet i fältet.
 
-1. När en order skickas i väg ska det skapas en order i Lager-API:t med hjälp av [API dokumentationen](https://lager.emilfolino.se/v2#add_order).
+1. <HiddenPrompt />När en order skickas i väg ska det skapas en order i Lager-API:t med hjälp av [API dokumentationen](https://lager.emilfolino.se/v2#add_order).
     1. Ordern som skapas ska innehålla information om kunden från ditt formulär.
     1. Dessutom ska den innehålla e-post adressen som skrivs in i Stripe formuläret och det `payment_id` som skickas med vid lyckade betalningar.
 
-1. Se till att varukorgen nollställs efter att beställningen lagts och att indikatorn visar att det inte finns något i varukorgen.
+1. <HiddenPrompt />Se till att varukorgen nollställs efter att beställningen lagts och att indikatorn visar att det inte finns något i varukorgen.
