@@ -79,17 +79,87 @@ Emil berätter i videoerna nedan hur du kommer igång med kursen.
 
 <YouTube posterQuality="max" id="3gNqV756YBQ" />
 
+Steg för steg:
+
+1. Logga in på GitHub med ditt studentkonto.
+1. Öppna **Settings** och välj **Emails** i menyn till vänster.
+1. Hitta din **primary** e-postadress. Det kan vara din student-adress hos BTH, men även en vanlig Gmail- eller Hotmail-adress, så länge det är den som är markerad som primary.
+1. Kopiera adressen.
+1. Gå till uppgiften "GitHub Konto" på Canvas och klistra in adressen i rutan. Det är det enda som ska stå där.
+1. Tryck på **Skicka uppgift**.
+
+Efter en stund får du en inbjudan till organisationen via e-post. Den hanterar du i nästa steg.
+
 
 
 ### Acceptera inbjudan till organisationen dbwebb-jsux på GitHub
 
 <YouTube posterQuality="max" id="Ouv-V2BjmAs" />
 
+Steg för steg:
+
+1. Öppna inbjudan i e-posten som skickades till din primary e-postadress. Det kan ta en stund innan den kommer.
+1. Klicka på knappen **Join dbwebb-jsux**.
+1. När du har gått med, **autentisera ditt konto**: klicka på **Authenticate your account** och sedan **Single sign-on to dbwebb-jsux**. Det här steget är viktigt, det gör att vi senare kan koppla ditt BTH-konto (Canvas) till ditt GitHub-konto och sätta betyg i Canvas.
+1. Om du inte redan är inloggad hos BTH i webbläsaren skickas du till BTH:s inloggning och sedan tillbaka till GitHub. Logga in där så går det vidare.
+
 
 
 ### Skapa din fork av repot dbwebb-jsux/webshop
 
 <YouTube posterQuality="max" id="a3SZH1wiHYo" />
+
+Steg för steg:
+
+**1. Skapa forken**
+
+1. Gå till repot `dbwebb-jsux/webshop` på GitHub.
+1. Klicka på **Fork** uppe till höger och välj **Create a new fork**.
+1. Välj ditt **personliga konto** som **Owner**, inte organisationen eller något annat som dyker upp.
+1. Du behöver ingen beskrivning. Lämna övriga val som de är.
+1. Klicka på **Create fork**. När den är klar hamnar du på `ditt-användarnamn/webshop` och inte längre under `dbwebb-jsux`.
+
+**2. Aktivera Actions**
+
+Actions används för att publicera din webbplats på GitHub Pages, köra automatiska tester och föra över betyg från GitHub till Canvas.
+
+1. Gå till fliken **Actions** i din fork.
+1. Klicka på den gröna knappen **I understand my workflows, go ahead and enable them**.
+1. Du ser tre workflows. Du behöver inte göra något med dem.
+
+**3. Slå på GitHub Pages**
+
+1. Gå till **Settings** för din fork och välj **Pages**.
+1. Under **Build and deployment** väljer du **GitHub Actions** som Source.
+1. Att repot är privat men den publicerade sidan publik är precis som det ska vara.
+
+**4. Tillåt publicering från kmom-brancher**
+
+Som standard får bara `main` publiceras. Du ska kunna publicera varje kmom-branch också.
+
+1. Gå till **Settings** och välj **Environments**.
+1. Öppna miljön **github-pages**.
+1. Under **Deployment branches and tags**, lägg till en regel med mönstret `kmom*`. Den matchar `kmom01`, `kmom02`, `kmom10` och så vidare.
+
+**5. Klona forken till din dator**
+
+1. Gå till fliken **Code**, klicka på den gröna knappen **Code** och välj **SSH**. Adressen ska börja med `git@github.com:`. Kopiera den.
+1. Öppna en terminal och skapa en katalog för kursen och gå in i den:
+
+   ```shell
+   mkdir jsux
+   cd jsux
+   ```
+
+1. Klona ditt repo med adressen du kopierade:
+
+   ```shell
+   git clone git@github.com:ditt-användarnamn/webshop.git
+   cd webshop
+   ```
+
+1. Kontrollera att filerna finns med `ls -la`.
+1. Starta webbplatsen med `npm start`. Du ska se en sida med texten att webbshoppen snart börjar.
 
 
 
@@ -101,6 +171,8 @@ Börja kmom01 med att skapa branchen `kmom01`.
 # stå i ditt repo
 git checkout -b kmom01
 ```
+
+Skriv namnet med små bokstäver och dubbelkolla stavningen. Kör sedan `git branch` för att se att du står i `kmom01`. Branchen finns än så länge bara på din dator. Du pushar upp den till GitHub när du lämnar in, se videon längst ner på sidan.
 
 <YouTube posterQuality="max" id="3dck6dZEMyw" />
 
