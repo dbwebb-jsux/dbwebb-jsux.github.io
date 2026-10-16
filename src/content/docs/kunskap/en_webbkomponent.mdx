@@ -37,7 +37,7 @@ Vi vill nu kapsla in all funktionalitet för varje enskild produkt i produktlist
 function renderProducts(products) {
   return products.map((product) => {
     return `<div class="product">
-    <img src="${product.image_url}" alt="Album art ${product.name}" />
+    <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
 </div>`
   }).join("\n")
@@ -51,7 +51,7 @@ I koden ovan ser vi att denna koden är väl lämpad för att göras om till en 
 function renderProducts(products) {
   return products.map((product) => {
 //     return `<div class="product">
-//     <img src="${product.image_url}" alt="Album art ${product.name}" />
+//     <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
 //     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
 // </div>`
     return `<single-product></single-product>`
@@ -70,13 +70,13 @@ Vi vill nu skicka med data till komponenten så vi har möjlighet att faktiskt v
 function renderProducts(products) {
   return products.map((product) => {
 //     return `<div class="product">
-//     <img src="${product.image_url}" alt="Album art ${product.name}" />
+//     <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
 //     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
 // </div>`
     return `<single-product product='${JSON.stringify({ 
       id: product.id, 
       name: product.name, 
-      image_url: product.image_url,
+      thumbnail_url: product.thumbnail_url,
     })}'></single-product>`
   }).join("\n")
 }
@@ -126,7 +126,7 @@ export default class SingleProduct extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = `<div class="product">
-          <img src="${this.product.image_url}" alt="Album art ${this.product.name}" />
+          <img src="${this.product.thumbnail_url}" alt="Album art ${this.product.name}" />
           <div class="bottom"><p>${this.product.name}</p><span class="add-to-cart" id="${this.product.id}">+</span></div>    
         </div>`
     }

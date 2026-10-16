@@ -35,3 +35,30 @@ Detta kan vi göra med hjälp av `picture` som i det följande exemplet.
 ```
 
 I ovanstående exempel visar vi 4 olika bilder beroende på bredden på användarens enhet och pixeldensitet. Som utgångspunkt visar vi bilden `sheep-small-portrait.jpg`. Har enheten en minimumsbredd på 376px använder vi bilden `sheep-small-landscape.jpg`. Har enheten en minimumsbredd på 668px använder vi antigen `sheep.jpg` eller `sheep@2x.jpg` beroende på pixeldensiteten.
+
+
+
+## När du inte styr över bilderna
+
+Exemplen ovan förutsätter att du har flera varianter av varje bild. I webbshoppen kommer produktbilderna från Lager API:t och du kan inte själv göra mindre versioner. Därför har varje produkt två adresser:
+
+* `image_url` är den stora bilden (1024 x 1024 pixlar, flera MB).
+* `thumbnail_url` är en liten variant (400 x 400 pixlar, ca 40 kB).
+
+Använd `thumbnail_url` i listor och kort, och `image_url` när bilden ska visas stor. Vill du också ha rätt variant beroende på skärmen kan du kombinera de två med `srcset` och `sizes`. Bredden i pixlar anges med `w`:
+
+```html
+<img
+  src="${product.thumbnail_url}"
+  srcset="${product.thumbnail_url} 400w, ${product.image_url} 1024w"
+  sizes="(min-width: 668px) 20vw, 100vw"
+  width="400" height="400"
+  loading="lazy"
+  alt="Album art ${product.name}" />
+```
+
+* `sizes` talar om för webbläsaren hur bred bilden kommer att vara på sidan, och webbläsaren väljer utifrån det och pixeldensiteten vilken bild i `srcset` som ska laddas ner.
+* `width` och `height` låter webbläsaren reservera plats för bilden innan den har laddats, så att sidan inte hoppar när bilderna kommer. Lägg till `height: auto` i din CSS om bilden ska skalas med bredden.
+* `loading="lazy"` gör att bilder som ligger utanför skärmen inte laddas ner förrän användaren scrollar nära dem.
+
+Mät gärna din webbshop med Google Lighthouse före och efter, det är en tydlig skillnad i hur mycket data som överförs.

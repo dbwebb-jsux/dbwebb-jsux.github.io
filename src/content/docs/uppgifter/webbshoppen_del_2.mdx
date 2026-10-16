@@ -30,9 +30,14 @@ För varje produkt som du har kopierat över finns det en kategori. Det finns fy
     "location": "A1B4",
     "price": 1,
     "image_url": "https://cdn.jsdelivr.net/gh/emilfolino/order_api@master/public/img/pink_voltage.png",
+    "thumbnail_url": "https://cdn.jsdelivr.net/gh/emilfolino/order_api@master/public/img/thumbs/pink_voltage.jpg",
     "category": "pop"
 },
 ```
+
+Värdena för `category` är exakt `pop`, `hard rock`, `country` och `hiphop` (notera mellanslaget i `hard rock` och att `hiphop` skrivs utan bindestreck). Du kan hämta bara en kategori genom att lägga till `category` i URL:en: `https://lager.emilfolino.se/v2/products?api_key=DIN_API_NYCKEL&category=pop`. Det går också bra att hämta alla produkter och filtrera med `Array.prototype.filter`. Att skriva in id:n för de tre albumen direkt i koden är inte okej.
+
+Bilden `image_url` är stor, `thumbnail_url` är en liten variant som passar bra i listor.
 
 
 

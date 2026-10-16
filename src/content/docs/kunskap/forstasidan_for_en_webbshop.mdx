@@ -186,7 +186,7 @@ async function renderProducts() {
 
   const productArray = result.data.map((product) => {
       return `<div class="product">
-  <img src="${product.image_url}" alt="Album art ${product.name}" />
+  <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
   <h3>${product.name}</h3>        
 </div>`
   })
@@ -197,7 +197,9 @@ async function renderProducts() {
 renderProducts();
 ```
 
-Om du laddar om sidan bör du kunna se stora bilder och några rubriker. Jag la till följande i min `style.css` för att få ner bildern lite i storlek och placera bild och text bredvid varann istället.
+Varje produkt har två bilder: `image_url` är en stor bild (1024 x 1024 pixlar, flera MB) och `thumbnail_url` är en liten variant (400 x 400 pixlar, ca 40 kB). I en lista där bilden visas liten använder vi `thumbnail_url`, det gör att sidan laddas snabbare och använder mindre data. Den stora bilden sparar vi till när en enskild produkt visas stor.
+
+Om du laddar om sidan bör du kunna se bilder och några rubriker. Jag la till följande i min `style.css` för att få ner bildern lite i storlek och placera bild och text bredvid varann istället.
 
 ```css
 .product {
