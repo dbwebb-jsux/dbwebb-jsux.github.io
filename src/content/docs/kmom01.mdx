@@ -161,6 +161,33 @@ Som standard får bara `main` publiceras. Du ska kunna publicera varje kmom-bran
 1. Kontrollera att filerna finns med `ls -la`.
 1. Starta webbplatsen med `npm start`. Du ska se en sida med texten att webbshoppen snart börjar.
 
+**6. Kontrollera att allt är grönt**
+
+Efter din första push (se inlämningen nedan) ska alla kontroller vara gröna, både i fliken **Actions** och på din pull request. Om **Deploy static content to Pages** är röd, med felet "Get Pages site failed", har du inte slagit på GitHub Pages som beskrivs i steg 3. Gå tillbaka dit och kontrollera att **Source** är satt till **GitHub Actions**, och kör sedan workflowet igen (**Re-run all jobs**).
+
+
+
+### Uppdatera din fork
+
+Ändringar som görs i startrepot `dbwebb-jsux/webshop` efter att du skapade din fork följer inte med automatiskt. Om vi meddelar att startrepot har uppdaterats gör du så här.
+
+1. Gå till din fork på GitHub och klicka på **Sync fork** och sedan **Update branch** (på `main`).
+1. Hämta ändringarna till din dator:
+
+   ```shell
+   git checkout main
+   git pull
+   ```
+
+1. För in ändringarna i din kmom-branch, till exempel `kmom02`:
+
+   ```shell
+   git checkout kmom02
+   git merge main
+   ```
+
+   (Du kan använda `git rebase main` i stället om du vet hur det fungerar.) Lös eventuella konflikter och committa.
+
 
 
 ### En branch för kmom01
@@ -197,6 +224,8 @@ Skriv namnet med små bokstäver och dubbelkolla stavningen. Kör sedan `git bra
 * Gör uppgiften "[Webbshoppen del 1](/uppgifter/webbshoppen_del_1)" enligt kravspecifikationen och lämna in enligt nedan.
 
 Nedan förklarar Emil hur du gör en inlämning i jsux.
+
+När du har pushat din branch och skapat din pull request ska alla kontroller vara gröna. Om **Deploy static content to Pages** är röd ("Get Pages site failed") har du inte slagit på GitHub Pages med källan **GitHub Actions**, gå då tillbaka till steg 3 under "Skapa din fork" och kör sedan om workflowet.
 
 <YouTube posterQuality="max" id="YD0tE7FW6i0" />
 

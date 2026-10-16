@@ -20,7 +20,7 @@ Du bör ha jobbat igenom kmom01, lämnat in och skapat en ny branch `kmom02`. Du
 Vi börjar med att ta en kopia av vår förstasida, som vi skapade i kmom01, så vi inte förstör något.
 
 ```shell
-# stå i ditt repot
+# stå i ditt repo
 cp index.html category.html
 ```
 
@@ -70,6 +70,15 @@ body {
 Med hjälp av [Adobe's Color Wheel](https://color.adobe.com/create/color-wheel) har jag skapat ett komplementärt färgschema enligt nedan. Färgarna kompleteras i vår design av vitt och nästan svart (#333) för bakgrund och text färg.
 
 <Image src={colorWheel} alt="Adobe's Color wheel" />
+
+Det finns några vanliga typer av färgscheman, utgångspunkten är färghjulet:
+
+* **Monokromatiskt:** nyanser, ljusare och mörkare varianter, av en enda färg. Lugnt och enhetligt.
+* **Analogt:** färger som ligger bredvid varandra på färghjulet, till exempel blå, blågrön och grön. Harmoniskt.
+* **Komplementärt:** två färger som ligger mitt emot varandra på färghjulet, till exempel blått och gult. Ger stark kontrast.
+* **Triadiskt:** tre färger med lika stort avstånd på färghjulet (en liksidig triangel). Färgstarkt men ändå balanserat.
+* **Split-komplementärt:** en färg och de två färgerna på var sida om dess komplementfärg. Kontrast som är mjukare än ett rent komplementärt schema.
+* **Tetradiskt:** fyra färger som bildar två komplementära par (en rektangel på färghjulet). Ger mycket variation och kräver att man balanserar färgerna.
 
 Genom att använda ett färgschema ser vi till utifrån färgteori att ha färgar som antigen passar ihop eller ger en bra kontrast. Jag lägger till dessa variabler i `variables.css` i `:root` elementet.
 
@@ -178,7 +187,7 @@ const variables = document.getElementById("variables-style")
 const modeSelect = document.getElementById("mode")
 
 modeSelect.addEventListener("change", function(event) {
-    variables.setAttribute("href", event.target.value)
+  variables.setAttribute("href", event.target.value)
 })
 ```
 
@@ -188,18 +197,23 @@ Vi använder de på följande sätt i vår kod.
 
 ```js
 // views/mode-selector.js
-const variables = document.getElementById("variables")
+const variables = document.getElementById("variables-style")
 const modeSelect = document.getElementById("mode")
 
 modeSelect.addEventListener("change", function(event) {
-    variables.setAttribute("href", event.target.value)
-    localStorage.setItem("mode", event.target.value)
+  variables.setAttribute("href", event.target.value)
+  localStorage.setItem("mode", event.target.value)
 })
 
 if (localStorage.getItem("mode")) {
-    variables.setAttribute("href", localStorage.getItem("mode"))
-    modeSelect.value = localStorage.getItem("mode")
+  variables.setAttribute("href", localStorage.getItem("mode"))
+  modeSelect.value = localStorage.getItem("mode")
 }
 ```
 
 När vi ändrar på `select`-elementet ser vi till att sätta värdet i `localStorage`. Vi ser även till att när vi öppnar sidan att sätta värdet från `localStorage` som värde för `href`-attributet för `link` elementet och värdet för vårt `select`-element.
+
+Två saker att veta om den här lösningen:
+
+* I `variables-dark.css` behöver du egentligen bara ha de variabler som skiljer sig från `variables.css`, i exemplet ovan `--text-color` och `--background-color`. Vi har kopierat hela filen för enkelhetens skull, men då måste du ändra färgpaletten på två ställen om du ändrar den. Ett alternativ är att låta det mörka temat ladda sin fil som en andra `link` efter `variables.css`, så att den bara skriver över det som skiljer.
+* Temat sätts av ett modulskript med `defer`, alltså efter att sidan har ritats första gången. Om du har sparat det mörka temat kan du därför se en kort blixt av det ljusa temat varje gång en sida laddas. Det är en känd begränsning i den här övningen. Du kan undvika den med ett litet skript direkt i `head` som läser `localStorage` innan sidan ritas, men det behöver du inte göra här.

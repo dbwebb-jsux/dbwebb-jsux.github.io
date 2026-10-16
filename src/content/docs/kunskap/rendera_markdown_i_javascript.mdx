@@ -5,14 +5,40 @@ description: Vi laddar ner en modul från ett CDN och renderar markdown
 
 En del har säkert redan sett att `product.description` delen av produkterna från Lager-API:t ser lite knasiga ut. De är skrivna med markdown och för att vi ska kunna visa det på ett snyggt sätt använder vi oss av en markdown parser.
 
-Vi väljer att ladda ner en modul direkt från ett CDN genom att använda `import`-syntaxen.
+Vi väljer att ladda ner en modul direkt från ett CDN genom att använda `import`-syntaxen. Vi låser versionen (`@18`) så att en ny huvudversion av biblioteket inte plötsligt ändrar sökvägar eller beteende och förstör din webbshop.
 
 ```javascript
-import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js"
+import { marked } from "https://cdn.jsdelivr.net/npm/marked@18/lib/marked.esm.js"
 ```
 
-Vi kan nu använda den i resterande del av koden, till exempel som nedan.
+Vi kan nu använda den i resterande del av koden. Nedan hämtar vi produkterna precis som i övningen [Förstasidan för en webbshop](/kunskap/forstasidan_for_en_webbshop), och skickar `product.description` genom `marked.parse` innan vi sätter det som `innerHTML`.
 
 ```javascript
-let descriptionElement.innerHTML = `<p>${marked.parse(product.description)}</p>`
+import auth from "./models/auth.js"
+import { marked } from "https://cdn.jsdelivr.net/npm/marked@18/lib/marked.esm.js"
+
+async function renderProducts() {
+  const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+  const result = await response.json()
+  const productList = document.getElementById("product-list")
+
+  const productArray = result.data.map((product) => {
+    return `<article class="product">
+  <h3>${product.name}</h3>
+  <div class="album-description">${marked.parse(product.description)}</div>
+</article>`
+  })
+
+  productList.innerHTML = productArray.join("\n")
+}
+
+renderProducts()
 ```
+
+Notera att vi inte lägger resultatet från `marked.parse` i ett `<p>`-element. Markdown blir blockelement som rubriker, listor och egna stycken, och de får inte ligga inuti ett `<p>`. Vi använder en `div` med en klass i stället.
+
+Beskrivningarna i API:t innehåller `###`-rubriker (till exempel "Band Name:" och "Backstory:"), som blir `<h3>`-element och konkurrerar med albumets titel och resten av sidans rubriker. Därför lindar vi in resultatet i ett element med en klass, `album-description`, så att du kan styla rubrikerna i beskrivningen separat, till exempel med `.album-description h3 { ... }`.
+
+### Om säkerhet och `innerHTML`
+
+`marked` rensar inte bort farlig HTML, och när du sätter en sträng som `innerHTML` körs det som står i den. Här är det okej eftersom markdown-texten kommer från kursens eget API, som vi litar på. Hämtar du markdown från en källa du inte litar på, till exempel text som användare har skrivit, ska du rensa resultatet med ett bibliotek som [DOMPurify](https://github.com/cure53/DOMPurify) innan du sätter det som `innerHTML`.

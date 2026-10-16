@@ -25,8 +25,8 @@ Nu bör Visual Studio Code öppnas och vi kan då skapa ett objekt, som vi expor
 ```javascript
 // stå i models/auth.js
 const auth = {
-    api_key: "DIN API NYCKEL",
-    api_url: "https://lager.emilfolino.se/v2",
+  api_key: "DIN API NYCKEL",
+  api_url: "https://lager.emilfolino.se/v2",
 }
 
 export default auth
@@ -34,11 +34,30 @@ export default auth
 
 Vi kommer titta på `import` och `export` senare i kursen och hur vi kan använda det för att exportera och importera moduler mellan JavaScript filer. Just nu använder vi det för att ha ett centralt ställe att hämta API-nyckeln och en URL till API:t ifrån.
 
+### Nyckeln ska checkas in, med flit
+
+`models/auth.js` är inte ignorerad av git, så filen med din nyckel kommer att committas, pushas till GitHub och dessutom publiceras som vanlig JavaScript på din GitHub Pages-sida. Det är med flit och acceptabelt här: nyckeln ger bara tillgång till ditt eget testlager med musikalbum, inte till något känsligt, och den kan inte användas till något annat än att läsa och ändra den datan. All JavaScript som körs i webbläsaren kan i vilket fall läsas av den som besöker sidan, så en nyckel i frontend-kod är aldrig hemlig. I ett riktigt projekt, eller för nycklar som kostar pengar eller ger åtkomst till personuppgifter, ska du aldrig checka in nycklar på det här sättet. Då hanteras de på en server eller med miljövariabler som inte hamnar i repot.
+
 
 
 ## Kopiera produkter
 
-För att vi alla ska ha samma uppsättning produkter (musikalbum) att utgå ifrån ska vi nu kopiera över produkter till ert egna lager. Vi gör detta med en POST-request till `https://lager.emilfolino.se/v2/copier/products`. För att kunna skicka en POST-request på ett smidigt sätt och utforska API:t installerar vi Postman.
+För att vi alla ska ha samma uppsättning produkter (musikalbum) att utgå ifrån ska vi nu kopiera över produkter till ert egna lager. Vi gör detta med en POST-request till `https://lager.emilfolino.se/v2/copier/products`. För att kunna skicka en POST-request på ett smidigt sätt och utforska API:t kan du använda Postman (se nedan) eller `curl` direkt i terminalen.
+
+### Skicka requesten
+
+Requesten ska vara en `POST` till `https://lager.emilfolino.se/v2/copier/products` med innehållstypen `application/x-www-form-urlencoded` och en parameter, `api_key`, med din API-nyckel som värde. Du behöver inte skicka något annat.
+
+Med `curl` (byt ut `DIN API NYCKEL`):
+
+```shell
+curl -X POST https://lager.emilfolino.se/v2/copier/products \
+  -d "api_key=DIN API NYCKEL"
+```
+
+I Postman väljer du `POST`, skriver in URL:en och går till fliken **Body**. Där väljer du **x-www-form-urlencoded**, skriver `api_key` som **Key** och din nyckel som **Value** och trycker på **Send**.
+
+Om allt gick bra svarar API:t med statuskoden `201 Created`. Hämta därefter `https://lager.emilfolino.se/v2/products?api_key=DIN API NYCKEL` i webbläsaren, du ska nu få tillbaka 12 produkter (album) i `data`.
 
 
 

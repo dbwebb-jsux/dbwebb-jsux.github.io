@@ -23,7 +23,7 @@ Du bör ha jobbat igenom övningen [Lager API:t](../kunskap/lager_apit) där du 
 
 ## Grundläggande struktur
 
-Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här vill vi ha ett `header`, ett `hero`, ett `main` och ett `footer`-element. Ersätt `body`-delen i den befintliga koden i `index.html` i ditt kursrepo så att det ser ut som nedan.
+Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här vill vi ha ett `header`, ett `hero`, ett `main` och ett `footer`-element. Ersätt hela `body`-elementet i den befintliga `index.html` i ditt repo så att filen ser ut som nedan (`head` är oförändrad, den visas bara så du ser hela filen).
 
 ```html
 <!doctype html>
@@ -53,7 +53,7 @@ Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här
 </html>
 ```
 
-Vi fortsätter sedan med att gå in i `style.css` och i den filen vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en såkallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket såtr för 100 procent av viewport height, alltså hur stor browsern är.
+Vi fortsätter sedan med att gå in i `style.css`. Där finns redan en `body`-regel. **Ersätt den** med regeln nedan, lägg inte till en ny `body`-regel längst ner i filen (det ger lint-felet `no-duplicate-selectors`). Här vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en såkallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket såtr för 100 procent av viewport height, alltså hur stor browsern är.
 
 ```css
 body {
@@ -67,7 +67,7 @@ body {
 }
 ```
 
-Vi sätter sedan bakgrundsfärg för `header` och `footer` så vi kan se hur vi påverkar `main` elementet om en liten stund.
+Vi sätter sedan bakgrundsfärg för `header` och `footer` så vi kan se hur vi påverkar `main` elementet om en liten stund. Dessa två regler **lägger du till** i `style.css`.
 
 ```css
 .header {
@@ -84,7 +84,20 @@ Nu kommer vi till den magiska biten med flexbox, som gör att vi slipper känna 
 
 <Image src={griffin} alt="Peter Griffin och CSS" />
 
-För `main` elementet med klassen `container` lägger vi till attributet `flex: 1;` ([flex-shorthand](https://css-tricks.com/snippets/css/a-guide-to-flexbox/#aa-flex)). Med hjälp av 'shorthand'-syntaxen sätter vi att vår container ska växa (`flex-grow`) och fylla upp allt innehåll i webbläsaren. Det ena attributet är alltså skillnaden på bilden till vänster nedan och bilden till höger.
+För `main` elementet med klassen `container` lägger vi till attributet `flex: 1` ([flex-shorthand](https://css-tricks.com/snippets/css/a-guide-to-flexbox/#aa-flex)). Den befintliga `.container`-regeln i `style.css` ska alltså **utökas** med en rad, så att den ser ut så här.
+
+```css
+.container {
+    width: 100%;
+    max-width: 67rem;
+    padding: 1.5rem;
+    margin: 0 auto;
+    background-color: #fff;
+    flex: 1;
+}
+```
+
+ Med hjälp av 'shorthand'-syntaxen sätter vi att vår container ska växa (`flex-grow`) och fylla upp allt innehåll i webbläsaren. Det ena attributet är alltså skillnaden på bilden till vänster nedan och bilden till höger.
 
 <div class="side-by-side">
     <Image src={flexLeft} alt="Utan flex: 1" />
@@ -95,7 +108,7 @@ För `main` elementet med klassen `container` lägger vi till attributet `flex: 
 
 ## En Hero-bild
 
-Nu fortsätter vi med vår design och lägger in en stor bild precis under headern som sätter tonen för vår webbshop. Jag laddade ner en bild från bildtjänsten [Unsplash](https://unsplash.com/), men går lika bra at skapa bilden med en AI-tjänst eller att använda bilder som ni själv har skapat.
+Nu fortsätter vi med vår design och lägger in en stor bild precis under headern som sätter tonen för vår webbshop. Jag laddade ner en bild från bildtjänsten [Unsplash](https://unsplash.com/), men går lika bra at skapa bilden med en AI-tjänst eller att använda bilder som ni själv har skapat. Startrepot innehåller ingen hero-bild och ingen `assets`-katalog, så du skapar katalogen själv och väljer en egen bild. Använd en fri bild (till exempel från Unsplash eller en som du har skapat själv) eller en enkel platshållare, och håll den liten: en bild på några hundra kB räcker gott och är bättre för både laddtid och CO₂-avtryck än en bild på flera MB.
 
 Jag har sparat filen som `assets/hero-banner.jpg` och lagt till detta i `index.html`.
 
@@ -185,21 +198,21 @@ async function renderProducts() {
   const productList = document.getElementById("product-list")
 
   const productArray = result.data.map((product) => {
-      return `<div class="product">
+    return `<div class="product">
   <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
-  <h3>${product.name}</h3>        
+  <h3>${product.name}</h3>
 </div>`
   })
 
   productList.innerHTML = productArray.join("\n")
 }
 
-renderProducts();
+renderProducts()
 ```
 
 Varje produkt har två bilder: `image_url` är en stor bild (1024 x 1024 pixlar, flera MB) och `thumbnail_url` är en liten variant (400 x 400 pixlar, ca 40 kB). I en lista där bilden visas liten använder vi `thumbnail_url`, det gör att sidan laddas snabbare och använder mindre data. Den stora bilden sparar vi till när en enskild produkt visas stor.
 
-Om du laddar om sidan bör du kunna se bilder och några rubriker. Jag la till följande i min `style.css` för att få ner bildern lite i storlek och placera bild och text bredvid varann istället.
+Om du laddar om sidan bör du kunna se bilder och några rubriker. Jag **lade till** följande i min `style.css` för att få ner bildern lite i storlek och placera bild och text bredvid varann istället.
 
 ```css
 .product {
@@ -218,3 +231,58 @@ h3 {
     margin-bottom: 1.75rem;
 }
 ```
+
+
+
+### Bilder med olika proportioner
+
+Albumomslagen har inte alltid samma proportioner, och bilder från andra källor har det sällan. Om bilderna får olika höjd blir korten i produktlistningen olika höga och rutnätet ser ojämnt ut. Lös det genom att tvinga alla bilder till samma proportioner med `aspect-ratio` och låt `object-fit: cover` beskära bilden så att den fyller ytan utan att dras ut.
+
+Lägg till de två nya raderna i den befintliga `.product img`-regeln, skapa inte en ny regel.
+
+```css
+.product img {
+    width: 20%;
+    aspect-ratio: 1 / 1; /* nytt */
+    object-fit: cover; /* nytt */
+}
+```
+
+Samma teknik fungerar för hero-bilden, till exempel med `width: 100%`, `aspect-ratio: 16 / 5` och `object-fit: cover` på `.hero img`.
+
+
+
+## Typsnitt från webben
+
+Webbshoppen du inspireras av använder ofta egna eller betalda typsnitt (till exempel IKEA:s egna typsnitt eller typsnitt som licensieras via Adobe Fonts), som du inte har rätt att ladda ner och använda. Välj då ett liknande gratis typsnitt, till exempel från [Google Fonts](https://fonts.google.com/), och notera i din rapport och i din webbshop vilket typsnitt du ersatte med och varför.
+
+Det enklaste sättet är att lägga en `link` i `head` i HTML-filen, före din `style.css`. Här används typsnittet Oswald som exempel.
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet" />
+```
+
+Därefter använder du typsnittet i CSS, med ett säkert reservtypsnitt sist.
+
+```css
+h1,
+h2,
+h3 {
+    font-family: Oswald, sans-serif;
+}
+```
+
+Alternativet är att ladda ner typsnittsfilen (om licensen tillåter) och lägga den i ditt repo, och använda `@font-face`. Då laddas filen från din egen domän och du skickar inga förfrågningar till tredje part.
+
+```css
+@font-face {
+    font-family: Oswald;
+    src: url("assets/fonts/Oswald-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+```
+
+Tänk på hållbarhet: varje typsnitt och varje vikt är en extra fil som webbläsaren måste ladda ner. Välj få typsnitt och bara de vikter du faktiskt använder (ett för rubriker och ett för brödtext räcker oftast), och ta gärna ett systemtypsnitt som `sans-serif` där det går.
