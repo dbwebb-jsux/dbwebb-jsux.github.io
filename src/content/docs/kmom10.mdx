@@ -48,7 +48,7 @@ Välj ut fem delar av din webbshop du vill förbättra design och utseende på. 
 
 ### Krav 1B: Nya teman
 
-Skapa sidor för de tre kategorier av musikalbum som du inte valde för `category.html` i kmom02. På dessa sidor skapa ett passande tema som fungerar i både Light och Dark-mode. Ändra både färg, typsnitt och till dels layout för de olika kategorierna. Dokumentera under rubriken **KRAV 1B** i din redovisningstext val av typsnitt och färgpalett för de tre nya kategori-sidorna.
+Skapa sidor för de tre kategorier av musikalbum som du inte valde för `category.html` i kmom02. Kategorierna i Lager-API:t är `pop`, `hard rock`, `country` och `hiphop`. På dessa sidor skapa ett passande tema som fungerar i både Light och Dark-mode. Ändra både färg, typsnitt och till dels layout för de olika kategorierna. Dokumentera under rubriken **KRAV 1B** i din redovisningstext val av typsnitt och färgpalett för de tre nya kategori-sidorna.
 
 _**Tips från coachen:** Använd variabler som i kmom02 och döp de till de olika kategorierna._
 
@@ -76,11 +76,16 @@ Skriv under rubriken **KRAV 2** i redovisningstexten att du gjort kravet och om 
 
 En stor del av en användarens upplevelse är när saker går fel. Lägg till felhantering i din webbshop för följande delar:
 
-* Felhantering av alla API-anrop till Lager-API:t och OpenAI-API:t med hjälp av `try-catch` för fetch. Se exempel på detta [Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Visa tydligt för användare om anropen går fel. Testa både genom att inte ha internet uppkoppling efter sidan laddats och genom att skicka felformaterat data.
+* Felhantering av alla API-anrop till Lager-API:t och OpenAI-API:t med hjälp av `try-catch` för fetch. Se exempel på detta [Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Visa tydligt för användare om anropen går fel. Anropen du ska se över är:
+  * Lager-API:t: hämta `products`, skapa `orders`, skapa `order_items`.
+  * Stripe via Lager-API:t: `create-checkout-session` och `session-status`.
+  * OpenAI-API:t i chatten.
 
-* När produkter läggs till i varukorgen får antal produkter inte överstiga lagersaldot. Lagersaldot finns som `stock` attributet på alla produkter från API:t. Se till att tydligt skriva ut/förhindra användaren i att beställa fler produkter än det finns i API:t.
+  `fetch` ger bara ett fel (exception) vid nätverksproblem. Svarar servern med ett felmeddelande, till exempel 401, 404 eller 500, går anropet ändå igenom, så du måste själv kontrollera `response.ok` (eller `response.status`) och hantera det. Testa både genom att inte ha internet uppkoppling efter sidan laddats (i Chrome DevTools, fliken Network, välj _Offline_ i listan för throttling) och genom att skicka felformaterat data. Med felformaterat menar vi till exempel ett svar som inte är giltig JSON eller ett svar där fält du förväntar dig saknas (till exempel att `products` saknar `name` eller `thumbnail_url`). Sidan ska då visa ett begripligt felmeddelande i stället för att gå sönder eller visa `undefined`.
 
-Beskriv under rubriken **KRAV 3** i din redovisningstext hur du gick tillväga och hur 
+* När produkter läggs till i varukorgen får antal produkter inte överstiga lagersaldot. Lagersaldot finns som `stock` attributet på alla produkter från API:t. Se till att tydligt skriva ut/förhindra användaren i att beställa fler produkter än det finns i API:t. Regeln ska gälla överallt där man kan lägga till produkter: lägg-till-knapparna på förstasidan, plus-knappen i varukorgen, och den ska kontrolleras på nytt på ordersidan precis innan beställningen skickas (lagersaldot kan ha ändrats sedan produkten lades i varukorgen).
+
+Beskriv under rubriken **KRAV 3** i din redovisningstext hur du gick tillväga och hur du testade felen.
 
 
 
@@ -88,7 +93,15 @@ Beskriv under rubriken **KRAV 3** i din redovisningstext hur du gick tillväga o
 
 Använd dina kunskaper från webtec-kursen för att göra en webbplats som fungerar på ett bra sätt på enheter i alla storlekar. Använd `media-queries` på ett bra sätt i din CSS-kod. För att anpassa bilder till olika stora enheter kan artikeln [Responsiva bilder](/kunskap/responsiva-bilder) ge ett antal tips. Produktbilderna kommer från Lager API:t, där `thumbnail_url` är en liten variant av `image_url`, se avsnittet "När du inte styr över bilderna" i artikeln.
 
-Dokumentera ditt tillvägagångssätt under rubriken **Krav 4** i din redovisningstext.
+Några vanliga fallgropar att kontrollera:
+
+* Fasta overlays och modaler (till exempel chatten) som täcker hela skärmen eller inte går att stänga på en liten skärm.
+* `vh`-enheter på mobiler, där adressfältet gör att `100vh` blir högre än den synliga ytan. Prova `dvh` eller `min-height`.
+* CSS Grid som spricker på smala skärmar. Använd `grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr))` eller `minmax(0, 1fr)` så att innehåll (långa ord, bilder) inte tvingar kolumnerna bredare än skärmen.
+* Bilder utan `width` och `height`-attribut, eller utan `height: auto` i CSS, som sträcks eller får sidan att hoppa.
+* Testa i Chrome DevTools device emulation (ikonen för enhetsverktygsfältet) på flera storlekar, både stående och liggande, inte bara genom att dra i fönstret.
+
+Dokumentera ditt tillvägagångssätt under rubriken **KRAV 4** i din redovisningstext.
 
 
 

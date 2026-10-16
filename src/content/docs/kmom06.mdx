@@ -7,6 +7,12 @@ import { YouTube } from 'astro-embed';
 import { Image } from 'astro:assets';
 import azureopenai from "../../assets/azureopenai.webp";
 
+:::caution[Beställ API-nyckeln redan nu]
+Nyckeln till Azure OpenAI kommer med mail en tid efter att du beställt den, ibland flera timmar. Beställ den redan nu via [BTH:s självserviceportal](https://bth.topdesk.net/), instruktioner finns i övningen [Azure OpenAI API](/kunskap/azure_openai_api), så att du inte blir stående utan nyckel mitt i veckan.
+
+Nyckeln är personlig, har begränsad kvot och checkas in i `models/auth.js` som en kompromiss för att kunna göra kursen utan egen server. Dela den inte med andra.
+:::
+
 I kursmomentet tittar vi på hur vi kan använda AI för att skapa en kundtjänstchatt.
 
 <Image src={azureopenai} alt="Azure and OpenAI logos" />
@@ -29,11 +35,14 @@ git checkout -b kmom06
 
 ## Läsa & titta
 
+{/* TODO tid: teacher decision */}
+<p class="time">(Ungefär X studietimmar)</p>
+
 ### Kurslitteratur
 
 I kursen används [Designing interfaces: patterns for effective interaction design](https://go.exlibris.link/zrLb9rwc) skriven av Tidwell J, Brewer C, Valencia A som kurslitteratur. Boken är tillgänglig som e-bok via biblioteket.
 
-Läs kapitlet "11. User Interface Systems and Atomic Design".
+Läs kapitlet "11. User Interface Systems and Atomic Design". Fokusera på hur ett användargränssnitt kan byggas upp av små, återanvändbara delar (atomer, molekyler, organismer) och vad ett designsystem är, det är samma tänk som vi använder när vi gör webbkomponenter.
 
 
 

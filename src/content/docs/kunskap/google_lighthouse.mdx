@@ -5,6 +5,20 @@ description: Emil visar hur man kan använda Google Lighthouse
 
 import { YouTube } from 'astro-embed';
 
+Google Lighthouse är ett verktyg inbyggt i Chrome som skapar en rapport över en sidas prestanda och tillgänglighet. Nedan går vi igenom hur du kör det, i videon visar Emil samma sak.
+
+## Köra en rapport
+
+1. Öppna sidan du vill mäta i ett **inkognitofönster** i Chrome. Tillägg i webbläsaren påverkar annars resultatet.
+1. Öppna DevTools (`F12`, eller `Cmd+Option+I` på Mac / `Ctrl+Shift+I` på Windows) och välj fliken **Lighthouse**.
+1. Välj enhet **Desktop**.
+1. Kryssa i de fyra kategorierna: **Performance**, **Accessibility**, **Best Practices** och **SEO**. Läs mer om vad de mäter i [Lighthouse-dokumentationen](https://developer.chrome.com/docs/lighthouse/overview).
+1. Klicka på **Analyze page load** och vänta på rapporten.
+
+Resultatet är fyra poäng mellan 0 och 100. Under poängen listar Lighthouse förbättringar och kontroller, så kallade _insights_ och _audits_, som visar vad som drar ner poängen och hur du kan åtgärda det.
+
+Poängen varierar något mellan körningar, framför allt Performance. Kör gärna samma sida två eller tre gånger och notera ett typvärde, och använd samma inställningar för alla sidor så att de går att jämföra.
+
 I videon nedan visar Emil hur man kan jobba med Google LightHouse för att skapa en rapport över en sidas prestanda och tillgänglighet.
 
 <YouTube posterQuality="max" id="96IO1QOurzI" />

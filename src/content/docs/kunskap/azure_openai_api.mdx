@@ -13,95 +13,204 @@ Du bör ha jobbat igenom kmom06, lämnat in och skapat en ny branch `kmom06`. Du
 
 ## En API-nyckel till Azure OpenAI's API
 
-I videon nedan visar Emil hur du får en API-nyckel. Efter ett kort tag bör ni få ett mail med API-nyckeln, spara undan den i `models/auth.js` på samma sätt som nyckeln ni har för Lager API:t. Börja med att gå till [BTH:s självserviceportal](https://bth.topdesk.net/) och följ sedan videon.
+I videon nedan visar Emil hur du får en API-nyckel. Efter ett kort tag bör ni få ett mail med API-nyckeln, lägg till den i `models/auth.js` bredvid nyckeln för Lager API:t, som ett nytt fält `openai_api_key` i objektet. Börja med att gå till [BTH:s självserviceportal](https://bth.topdesk.net/) och följ sedan videon.
 
 <YouTube posterQuality="max" id="suOB5SxGn7A" />
+
+:::caution[Nyckeln är personlig]
+Nyckeln är personlig, har en begränsad kvot (rate limit) och är kopplad till ditt namn. Av praktiska skäl checkar vi in den i `models/auth.js` och den publiceras då i din frontend-kod, precis som Lager-nyckeln. Det är en kompromiss för att kunna göra kursen utan en egen server, inte ett sätt att hantera nycklar i riktiga projekt. Dela inte nyckeln med andra och använd den inte till annat än kursen. Om nyckeln missbrukas kan den spärras.
+:::
 
 
 
 ## Anrop till BTH:s OpenAI API
 
-BTH har ett digitaliseringsråd och dekan Lars Lundberg har i det rådet drivit fram att BTH ska ha möjlighet för att använda LLM's via ett API. På samma sätt som vi gör anrop till Lager API:t kommer vi göra anrop mot OpenAI's API skillnaden blir dock att vi gör det lite mer dynamiskt då vi vill få till ett samtal. I nedanstående exempel utgår jag från en webbkomponent och i det ett input-fält, samt ett element där meddelanden läggs till. Vi använder `keyup` som event i vår kod. Det event skickas i väg varje gång en användare släpper en tangent. Vi kollar sedan om den tangenten som användare släppt är Enter. Är den det anropar vi funktionen `sendMessage`.
+BTH har ett digitaliseringsråd och dekan Lars Lundberg har i det rådet drivit fram att BTH ska ha möjlighet för att använda LLM's via ett API. På samma sätt som vi gör anrop till Lager API:t kommer vi göra anrop mot OpenAI's API skillnaden blir dock att vi gör det lite mer dynamiskt då vi vill få till ett samtal.
+
+Nedan finns en komplett webbkomponent som du kan utgå ifrån. Läs igenom den och förstå vad varje del gör innan du bygger vidare, den är ett exempel och inte facit. Den passar ESLint-reglerna i startrepot (2 mellanslag, inga semikolon).
 
 ```javascript
+// components/chat-window.js
+import auth from "../models/auth.js"
+
+const url = "https://bth-ai.azure-api.net/student/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview"
+
 export default class ChatWindow extends HTMLElement {
+  constructor() {
+    super()
+    // Hela konversationen sparas här så att chatten minns vad som sagts
+    this.messages = [
+      {
+        role: "system",
+        content: "Du är kundtjänst i musikbutiken Vinylhörnan. Svara kort och vänligt på svenska, och hjälp kunder med frågor om album, leverans och beställningar. Om du inte vet svaret, säg det.",
+      },
+    ]
+  }
+
   connectedCallback() {
     this.innerHTML = `
-        <div id="chat-messages" class="chat-messages"></div>
-        <input type="text" id="new-message" class="input new-message">
+      <div class="chat-messages"></div>
+      <form class="chat-form">
+        <input type="text" class="input new-message" name="message" autocomplete="off" required>
+        <button type="submit" class="button">Skicka</button>
+      </form>
     `
 
-    const newMessage = document.getElementById("new-message")
-    newMessage.addEventListener("keyup", (event) => {
-        if (event.key === "Enter") {
-            this.sendMessage(event.target)
-        }        
+    this.chatMessages = this.querySelector(".chat-messages")
+
+    this.querySelector(".chat-form").addEventListener("submit", (event) => {
+      event.preventDefault()
+      const input = event.target.elements.message
+
+      this.sendMessage(input.value)
+      input.value = ""
     })
   }
 
-  async sendMessage(element) {
-    const chatMessages = document.getElementById("chat-messages")
-    console.log(element.value)
-  }
-}
-```
+  addMessage(text, className) {
+    const paragraph = document.createElement("p")
 
-Vi lägger sedan till användarens meddelande till i det element som visar chatt-meddelanden och nollställer vårt input-fält. Sedan bygger vi upp den data som vi vill skicka till systemet. Först definierar vi vilken roll vi vill att LLM'n ska ha genom att säga `role: "system"` här väljer jag att lägga in URL'n till min webbshop. Sedan använder vi `role: "user"` för att säga att ni är det ett meddelande från en användare och där har vi sedan meddelandet från input-fältet. Testa er gärna fram till en bra prompt för rollen på systemet, det brukar spela stor roll hur man skriver den prompten.
-
-```javascript
-async sendMessage(element) {
-  const chatMessages = document.getElementById("chat-messages")
-  const message = element.value
-  chatMessages.innerHTML += `<p class="user-message">${message}</p>`
-  element.value = ""    
-
-  const data = {
-      messages: [
-          {
-              role: "system",
-              content: "Du är en hjälpsam kundtjänst chatt för webbshoppen URL",
-          },
-          {
-              role: "user",
-              content: message,
-          },
-      ]
-  }
-}
-```
-
-Den sista delen av funktionen handlar om att skicka iväg en förfrågan till OpenAI API:t. Vi gör det som tidigare med en fetch med metoden POST. I detta fallet skickar vi med API-nyckeln som en header. När vi fått tillbaka ett svar (kan ta en liten stund) så lägger vi till den i chat-messages-elementet. 
-
-```javascript
-async sendMessage(element) {
-  const chatMessages = document.getElementById("chat-messages")
-  const message = element.value
-  chatMessages.innerHTML += `<p>${message}</p>`
-  element.value = ""    
-
-  const data = {
-      messages: [
-          {
-              role: "system",
-              content: "Du är en hjälpsam kundtjänst chatt för webbshoppen URL",
-          },
-          {
-              role: "user",
-              content: message,
-          },
-      ]
+    paragraph.className = className
+    paragraph.textContent = text
+    this.chatMessages.appendChild(paragraph)
   }
 
-    const response = await fetch("https://bth-ai.azure-api.net/student/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview", {
-        body: JSON.stringify(data),
+  async sendMessage(message) {
+    this.addMessage(message, "user-message")
+    this.messages.push({ role: "user", content: message })
+
+    try {
+      const response = await fetch(url, {
+        body: JSON.stringify({ messages: this.messages }),
         headers: {
-            'content-type': 'application/json',
-            'api-key': auth.openai_api_key
+          "content-type": "application/json",
+          "api-key": auth.openai_api_key,
         },
-        method: 'POST'
-    })
-    const result = await response.json()
+        method: "POST",
+      })
 
-  chatMessages.innerHTML += `<p>${result.choices[0].message.content}</p>`
+      if (!response.ok) {
+        this.addMessage(this.errorText(response.status), "error-message")
+        return
+      }
+
+      const result = await response.json()
+      const answer = result.choices[0].message.content
+
+      this.messages.push({ role: "assistant", content: answer })
+      this.addMessage(answer, "bot-message")
+    } catch (error) {
+      console.error(error)
+      this.addMessage("Kunde inte nå chatten, kontrollera din uppkoppling och försök igen.", "error-message")
+    }
+  }
+
+  errorText(status) {
+    if (status === 401) {
+      return "Nyckeln godkändes inte (401). Kontrollera att openai_api_key i models/auth.js är rätt."
+    }
+
+    if (status === 429) {
+      return "För många anrop eller slut på kvot (429). Vänta en stund och försök igen."
+    }
+
+    return `Något gick fel (status ${status}).`
+  }
+}
+```
+
+Registrera komponenten i `main.js` som du gjorde med `single-product`, och lägg `<chat-window></chat-window>` där chatten ska visas.
+
+### Vad koden gör
+
+* **Importen av `auth`** ger oss nyckeln. Importen måste finnas, annars blir `auth` odefinierad. Sökvägen beror på var komponenten ligger.
+* **`this.querySelector`** söker bara inuti komponenten. Med `document.getElementById` kan vi råka hitta ett annat element med samma id om det finns flera chattar på sidan.
+* **`<form>` med `submit`** gör att Enter och knappen fungerar likadant, även på mobil, och att `required` kan stoppa tomma meddelanden. `keyup` triggas även av andra tangenter och går att missa med mobila tangentbord. Vi anropar `event.preventDefault()` så att sidan inte laddas om.
+* **`messages`-listan** innehåller hela samtalet. Vi skickar med alla meddelanden varje gång, annars minns inte modellen vad som sagts tidigare. Svaret sparas med `role: "assistant"`.
+* **System-prompten** (`role: "system"`) bestämmer hur modellen beter sig. Exemplet ovan är bara ett exempel, skriv din egen som passar din webbshop: vad säljer du, hur ska chatten svara, vad ska den göra om den inte vet svaret? Testa dig fram, den spelar stor roll.
+* **`textContent` och `createElement`** i stället för `innerHTML`. Text från användaren och från modellen ska aldrig tolkas som HTML. Om vi skriver `innerHTML += message` kan en användare (eller ett svar från modellen) innehålla till exempel `<img src=x onerror="...">`, och då körs den koden i webbläsaren. Det kallas XSS (cross-site scripting). `textContent` skriver alltid ut texten som text.
+
+### Felhantering
+
+`fetch` ger bara fel (exception) vid nätverksproblem, inte när servern svarar med ett felmeddelande. Därför kontrollerar vi `response.ok` och visar ett begripligt meddelande för användaren i stället för att försöka läsa ett svar som inte finns. Några vanliga statuskoder:
+
+* **401**: fel eller saknad nyckel. Kontrollera `models/auth.js`.
+* **429**: för många anrop eller slut på kvot. Vänta en stund.
+* **Kvoten är slut eller nyckeln fungerar inte alls**: fråga på Discord.
+
+### Valfritt: laddningsindikator och scroll
+
+Ett svar kan ta några sekunder. Visa att något händer genom att lägga till en rad innan `fetch` och ta bort den efteråt:
+
+```javascript
+// i sendMessage, före fetch
+this.addMessage("Skriver...", "loading-message")
+const loading = this.chatMessages.lastElementChild
+
+// efter fetch (lägg gärna i en finally-sats)
+loading.remove()
+```
+
+Och när chatten blir lång vill vi scrolla ner till det senaste meddelandet. Lägg raden sist i `addMessage`:
+
+```javascript
+this.chatMessages.scrollTop = this.chatMessages.scrollHeight
+```
+
+### Exempel på CSS
+
+Chatten behöver lite CSS för att se ut som en chatt. Klasserna `.input` och `.button` kommer från formulär-CSS:en i kmom04, här är en enkel start i `chat.css` som du får bygga vidare på:
+
+```css
+chat-window {
+  display: block;
+  max-width: 30rem;
+}
+
+.chat-messages {
+  height: 20rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background-color: #fff;
+}
+
+.chat-messages p {
+  max-width: 80%;
+  margin: 0 0 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+}
+
+.chat-messages .user-message {
+  margin-left: auto;
+  background-color: #0b9ea5;
+  color: #fff;
+}
+
+.bot-message {
+  background-color: #eee;
+}
+
+.loading-message {
+  color: #666;
+  font-style: italic;
+}
+
+.error-message {
+  background-color: #fdd;
+  color: #900;
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.chat-form .input {
+  flex: 1;
 }
 ```

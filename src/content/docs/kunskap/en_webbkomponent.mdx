@@ -24,22 +24,27 @@ När vi utvecklar mjukvara är det ett antal olika principer och best-practices 
 
 **Encapsulation** [c.f. 3]
 
-Vi vill alltså kapsla in vår kod som har exakt ett (1) ansvarsområde för att kunna återanvända. I denna övningen kommer vi byta ut de enskilda produkterna i produktlistningen mot komponenter, i uppgiften "[Webbshoppen del 5](/uppgifter/webbshoppen_del_5)" gör ni sedan ett liknande arbete för produkterna som ligger i varukorgen.
+Vi vill alltså kapsla in vår kod som har exakt ett (1) ansvarsområde för att kunna återanvända. I denna övningen bygger vi produktlistningen på förstasidan med en komponent per produkt. I uppgiften "[Webbshoppen del 5](/uppgifter/webbshoppen_del_5)" gör ni sedan ett liknande arbete för produkterna som ligger i varukorgen, det är alltså varukorgskomponenten som är själva uppgiften.
 
 
 
 ## Produktlistningen
 
-Vi vill nu kapsla in all funktionalitet för varje enskild produkt i produktlistningen i en komponent. Jag har i min `views/main.js` en funktion `renderProducts` som skriver ut boxar med produkterna. Ni bör ha något liknande kan dock ligga i andra filer eller se ut på ett annat sätt.
+Vi vill nu kapsla in all funktionalitet för varje enskild produkt i produktlistningen i en komponent. Jag har i min `views/main.js` en funktion `renderProducts` som skriver ut boxar med produkterna. Ni bör ha något liknande, men det kan ligga i andra filer eller se ut på ett annat sätt. Mappnamn och importsökvägar i exemplen nedan behöver du anpassa till din egen filstruktur (om din `main.js` ligger i roten blir importen `./components/single-product.js`).
+
+Markupen i exemplet (till exempel `<span class="add-to-cart" id="...">`) är bara ett exempel. Har du en annan markup, till exempel en `<button>` med `data-product-id`, behåll den. Det viktiga är att knapparna för att lägga till i varukorgen fortfarande fungerar när du bytt till komponenter.
 
 ```javascript
 // main.js
 function renderProducts(products) {
   return products.map((product) => {
     return `<div class="product">
-    <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
-    <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
-</div>`
+      <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
+      <div class="bottom">
+        <p>${product.name}</p>
+        <span class="add-to-cart" id="${product.id}">+</span>
+      </div>
+    </div>`
   }).join("\n")
 }
 ```
@@ -49,11 +54,7 @@ I koden ovan ser vi att denna koden är väl lämpad för att göras om till en 
 ```javascript
 // main.js
 function renderProducts(products) {
-  return products.map((product) => {
-//     return `<div class="product">
-//     <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
-//     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
-// </div>`
+  return products.map(() => {
     return `<single-product></single-product>`
   }).join("\n")
 }
@@ -65,22 +66,28 @@ Om vi laddar om förstasidan misstänker jag att det i stor utsträckning blir h
 
 Vi vill nu skicka med data till komponenten så vi har möjlighet att faktiskt visa upp något vettigt. Vi använder `JSON.stringify` för att göra om ett objekt med de attribut vi behöver i komponenten till en sträng, som vi sedan i komponentens kod kan göra en `JSON.parse` av för att få värdena som ett objekt.
 
+JSON innehåller dubbla citattecken (`"`) och om vi lägger strängen i ett attribut med dubbla citattecken måste de skrivas som `&quot;`, annars bryts attributet av. En liten hjälpfunktion löser det (webbläsaren gör om `&quot;` till `"` igen när den läser attributet). Det gör också att produktnamn med citattecken eller apostrofer, som `Guns N' Roses`, fungerar.
+
 ```javascript
 // main.js
+function escapeAttribute(text) {
+  return text.replaceAll("&", "&amp;").replaceAll('"', "&quot;")
+}
+
 function renderProducts(products) {
   return products.map((product) => {
-//     return `<div class="product">
-//     <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
-//     <div class="bottom"><p>${product.name}</p><span class="add-to-cart" id="${product.id}">+</span></div>    
-// </div>`
-    return `<single-product product='${JSON.stringify({ 
-      id: product.id, 
-      name: product.name, 
+    const data = JSON.stringify({
+      id: product.id,
+      name: product.name,
       thumbnail_url: product.thumbnail_url,
-    })}'></single-product>`
+    })
+
+    return `<single-product product="${escapeAttribute(data)}"></single-product>`
   }).join("\n")
 }
 ```
+
+
 
 ## Webbkomponentens klass
 
@@ -102,38 +109,94 @@ Vår kod gör sedan inte mycket mer än att sätta att `innerHTML` för vårt el
 ```javascript
 // components/single-product.js
 export default class SingleProduct extends HTMLElement {
-    // connect component
-    connectedCallback() {
-        this.innerHTML = `<p>Produkt</p>`
-    }
+  // connect component
+  connectedCallback() {
+    this.innerHTML = `<p>Produkt</p>`
+  }
 }
 ```
 
-För att vi ska få till nån sorts funktionalitet i komponenten och på vår sida lägger vi till ett antal andra metoder. Först `observedAttributes` som definierar vilka attribut vi kunna hämta data ifrån, utöver de som i vanliga fall definieras för ett HTML-element till exempel `class`, `id` osv. Sedan skapar vi en getter-funktion som gör `JSON.parse` på produkten som vi tidigare skickade med till komponenten.
+För att vi ska få till nån sorts funktionalitet i komponenten och på vår sida lägger vi till en getter-funktion som gör `JSON.parse` på produkten som vi tidigare skickade med till komponenten.
 
 I `connectedCallback` använder vi sedan den kod som vi tidigare hade i `renderProducts`, men byter ut `product` mot `this.product` för att referera tillbaka mot klassen getter-funktion `product()`.
 
 ```javascript
 // components/single-product.js
 export default class SingleProduct extends HTMLElement {
-    static get observedAttributes() {
-        return ['product']
-    }
+  get product() {
+    return JSON.parse(this.getAttribute("product"))
+  }
 
-    get product() {
-        return JSON.parse(this.getAttribute("product"))
-    }
-
-    connectedCallback() {
-        this.innerHTML = `<div class="product">
-          <img src="${this.product.thumbnail_url}" alt="Album art ${this.product.name}" />
-          <div class="bottom"><p>${this.product.name}</p><span class="add-to-cart" id="${this.product.id}">+</span></div>    
-        </div>`
-    }
+  connectedCallback() {
+    this.innerHTML = `<div class="product">
+      <img src="${this.product.thumbnail_url}" alt="Album art ${this.product.name}" />
+      <div class="bottom">
+        <p>${this.product.name}</p>
+        <span class="add-to-cart" id="${this.product.id}">+</span>
+      </div>
+    </div>`
+  }
 }
 ```
 
+_Du kan se exempel i andra guider på `static get observedAttributes()`. Den behövs bara om komponenten ska reagera när ett attribut ändras efter att den skapats (via `attributeChangedCallback`). Vi läser attributet en gång när komponenten läggs till, så vi behöver den inte här._
+
 Vi bör nu kunna se våra produkter på första sidan av vår webbshop.
+
+
+
+## Koppla ihop knapparna
+
+Eftersom komponenterna skriver sin HTML först när de läggs till i dokumentet (`connectedCallback`) måste koden som kopplar `click` på lägg-till-knapparna (till exempel `instantiateCartButtons()`) köras **efter** att listan har skrivits ut i sidan. Körs den före hittar den inga knappar. Ett annat sätt är att komponenten själv kopplar sin knapp i `connectedCallback`.
+
+## Händelsehanterare som klassmetoder
+
+Funktionalitet som hör till komponenten, som att hantera ett klick, lägger vi som metoder i klassen. Använd en pilfunktion i `addEventListener` så att `this` fortfarande pekar på komponenten:
+
+```javascript
+// components/single-product.js
+export default class SingleProduct extends HTMLElement {
+  get product() {
+    return JSON.parse(this.getAttribute("product"))
+  }
+
+  connectedCallback() {
+    this.innerHTML = `<div class="product">
+      <p>${this.product.name}</p>
+      <button class="add-to-cart">+</button>
+    </div>`
+
+    this.querySelector(".add-to-cart").addEventListener("click", () => {
+      this.addToCart()
+    })
+  }
+
+  addToCart() {
+    console.log("Lägger till", this.product.id)
+  }
+}
+```
+
+Döp inte en metod till `remove()` i din komponent, det namnet används redan av `Element.remove()` som tar bort elementet ur sidan. Använd till exempel `removeProduct()`.
+
+### Så säger en komponent till att varukorgen ska uppdateras
+
+När en komponent ändrar varukorgen måste räknaren och varukorgsvyn uppdateras. Låt inte komponenten importera `views/cart.js` samtidigt som `cart.js` importerar komponenten, då får du en cirkulär import. Lägg i stället varukorgens data och funktioner (hämta, spara, ändra antal, ta bort) i en gemensam fil, till exempel `models/cart.js`, som både komponenter och vyer importerar. Ett enkelt sätt att meddela övriga delar av sidan är ett eget event:
+
+```javascript
+// models/cart.js
+export function saveCart(cart) {
+  localStorage.setItem("cart", JSON.stringify(cart))
+  document.dispatchEvent(new CustomEvent("cart-changed"))
+}
+```
+
+```javascript
+// views/main.js (eller där du visar räknaren)
+document.addEventListener("cart-changed", () => {
+  updateCartCount()
+})
+```
 
 
 

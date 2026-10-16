@@ -22,3 +22,9 @@ Du bör ha klarat av kmom04 och uppgiften "[Webbshoppen del 4](/uppgifter/webbsh
 1. <HiddenPrompt />Skicka med nödvändig data från list-vyn till komponenten med hjälp av en JSON-sträng.
 
 1. <HiddenPrompt />Hantera minskning, ökning och borttagning av produkter i metoder i klassen för din komponent.
+
+Tips:
+
+* I övningen [En webbkomponent](/kunskap/en_webbkomponent) bygger du komponenten för produktlistningen på förstasidan. Uppgiften här är att göra motsvarande för varukorgen.
+* Döp inte metoden för borttagning till `remove()`, det namnet används redan av `Element.remove()`. Använd till exempel `removeProduct()`.
+* Låt varukorgens data och funktioner ligga i en gemensam fil, till exempel `models/cart.js`, som både komponenter och vyer importerar, eller meddela övriga delar av sidan med ett eget event. Då undviker du cirkulära importer. Se exempel i övningen.
