@@ -17,7 +17,7 @@ Du bör ha klarat av kmom03 och uppgiften "[Webbshoppen del 3](/uppgifter/webbsh
 
 ## Kravspecifikation
 
-1. <HiddenPrompt />Gör det möjligt att gå från varukorgen till en order-sida.
+1. <HiddenPrompt />Gör det möjligt att gå från varukorgen till en order-sida, till exempel med en "Beställ"-knapp i varukorgspanelen under produktlistan. Knappen ska inte visas när varukorgen är tom.
 
 1. <HiddenPrompt />Skapa ett orderformulär där Stripe är integrerat.
 
@@ -27,4 +27,4 @@ Du bör ha klarat av kmom03 och uppgiften "[Webbshoppen del 3](/uppgifter/webbsh
     1. Ordern som skapas ska innehålla information om kunden från ditt formulär.
     1. Dessutom ska den innehålla e-post adressen som skrivs in i Stripe formuläret och det `payment_id` som skickas med vid lyckade betalningar.
 
-1. <HiddenPrompt />Se till att varukorgen nollställs efter att beställningen lagts och att indikatorn visar att det inte finns något i varukorgen.
+1. <HiddenPrompt />Se till att varukorgen nollställs efter att beställningen lagts och att räknaren från del 3 (siffran på varukorgsikonen) visar att det inte finns något i varukorgen. Din `cart.js` behöver därför exportera en funktion som tömmer varukorgen och uppdaterar räknaren.

@@ -33,7 +33,13 @@ Det helt vanliga text input fältet ger ett vanligt tangentbord och ingen klient
 
 
 
-Om man har ett fält där användaren bara ska ange siffror kan man använda sig av `number`. Detta gör att tangentbordet på mobila enheter bytts ut mot ett numerisk och att det inte går att fylla i annat än karaktärer relaterade till siffror.
+Om man har ett fält där användaren ska ange ett tal som man kan räkna med, till exempel antal, kan man använda sig av `number`. Detta gör att tangentbordet på mobila enheter bytts ut mot ett numerisk och att det inte går att fylla i annat än karaktärer relaterade till siffror.
+
+Använd däremot **inte** `number` för siffror som inte är tal, som postnummer, telefonnummer, personnummer eller kortnummer. Ett postnummer som "379 79" innehåller ett mellanslag, ett postnummer kan börja med 0 och man ska aldrig räkna med det, och `number` ger dessutom upp- och nedpilar och ändrar värdet när man scrollar. Använd istället `type="text"` med `inputmode="numeric"` (som ger det numeriska tangentbordet på mobilen) och ett `pattern`:
+
+```html
+<input type="text" inputmode="numeric" pattern="[0-9]{3} ?[0-9]{2}" autocomplete="postal-code">
+```
 
 ```html
 <input type="number">
@@ -122,14 +128,17 @@ Kan användas tillsammans med numeriska input-fält (number, date, time, range) 
 Om man vill ta det ett steg längre kan man använda så kallade reguljära uttryck för att validera fältens innehåll. Till exempel om vi vill validera ett personnummer kan vi göra följande.
 
 ```html
-<input type="text" pattern="[0-9]{6}-[0-9]{4}" placeholder="YYMMDD-XXXX" >
+<label for="zip">Postnummer (fem siffror, till exempel 379 79)</label>
+<input type="text" id="zip" inputmode="numeric" pattern="[0-9]{3} ?[0-9]{2}">
 ```
+
+Vi skriver formatet i synlig text vid fältet istället för i ett `placeholder`-attribut. En placeholder försvinner så fort användaren börjar skriva, och många tolkar den som att fältet redan är ifyllt. Det är en av rekommendationerna i artikeln [Website Forms Usability](https://www.nngroup.com/articles/web-form-design/) från kursmomentet.
 
 
 
 ### CSS-pseudoklasser
 
-Ytterligare en fördel med form valideringen är att om fältet validerar får fältet pseudoklassen `:valid`. Om fältet inte validerar har det pseudoklassen `:invalid`. Vi kan sedan använda dessa pseudoklasser för att styla våra input fält. I nästa del av artikeln använder vi denna möjlighet.
+Ytterligare en fördel med form valideringen är att om fältet validerar får fältet pseudoklassen `:valid`. Om fältet inte validerar har det pseudoklassen `:invalid`. Problemet med `:invalid` är att den gäller direkt när sidan laddas, så alla tomma fält med `required` blir "felaktiga" innan användaren har hunnit skriva något. Därför finns pseudoklassen `:user-invalid`, som först börjar gälla när användaren har interagerat med fältet (till exempel lämnat det). Vi kan sedan använda den för att styla våra input fält. I nästa del av artikeln använder vi denna möjlighet.
 
 
 
@@ -139,30 +148,49 @@ När vi designar formulärfält vill vi att de olika fälten ser likadana ut. Vi
 
 Vi börjar med den enhetliga stylingen. Vi börjar med att definiera klassen `.input` då kan vi använda klassen när vi vill ge styling till element. Vi vill som för knapparna ha ett mjukt utseende och rundar därför hörnen på samma sätt som för knapparna. Vi vill ha samma tunna ram runt knappen och vi vill ha samma typsnitt i formulärfälten som på resten av sidan. Vi vill även ha samma bredd på alla formulärfält trots de olika typer och vi specificerar bredden i `rem`. Vi ökar den inre marginalen (padding) så att fälten blir lättare att klicka på. Vi vill även ha ett avstånd mellan formulärfältet och sätter det som `margin-bottom`.
 
-```scss
+```css
+/* forms.css */
 .input {
-    font-size: var(--default-font-size);
-    line-height: var(--default-line-height);
-    font-family: var(--default-font);
-    display: block;
-    border: 1px solid #ccc;
-    border-radius: 0.2rem;
-    padding: 0.6rem 0.6rem;
-    width: 32rem;
-    max-width: 100%;
-    margin-bottom: var(--default-margin-bottom);
+  font-size: 1rem;
+  line-height: 1.4;
+  font-family: sans-serif;
+  display: block;
+  border: 1px solid #767676;
+  border-radius: 0.2rem;
+  padding: 0.6rem;
+  width: 32rem;
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+.button {
+  display: inline-block;
+  font-size: 1rem;
+  font-family: sans-serif;
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border: 0;
+  border-radius: 0.2rem;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  cursor: pointer;
 }
 ```
 
-För att använda oss av `:valid` och `:invalid` pseudoklasserna kan vi göra följande. Här sätter vi ramen runt fältet till grön om det validerar och röd om det inte validerar.
+Reglerna `.input` och `.button` ovan ger fälten och knapparna (även "Beställ"-länken `<a class="button">` i varukorgen) ett enhetligt utseende. Färgerna `--text-color` och `--background-color` kommer från din `variables.css` från kmom02, byt ut dem mot egna värden om du har andra namn.
+
+För att visa att ett fält är felaktigt använder vi `:user-invalid`. Vi får inte förlita oss på färg ensam (rött och grönt är svårt att skilja för många), så vi lägger även till en tjockare ram och en bakgrund, och i HTML:en skriver vi tydligt vilket format som gäller i en text vid fältet. Vi markerar inte "rätt" med grönt, det räcker att visa när något är fel.
 
 ```css
-.input:valid {
-    border: 1px solid green;
+/* forms.css */
+.input:user-invalid {
+  border: 3px solid #b00020;
+  background-color: #fdecea;
 }
 
-.input:invalid {
-    border: 1px solid red;
+.input:focus-visible {
+  outline: 3px solid #1a73e8;
+  outline-offset: 2px;
 }
 ```
 
@@ -170,26 +198,48 @@ För att använda oss av `:valid` och `:invalid` pseudoklasserna kan vi göra f�
 
 ## Hantera data med formData
 
-När vi har fått till ett bra formulär vill vi även kunna använda datan från formuläret till något. I `order.html` lägger vi först till ett formulär, som i detta fallet enbart innehåller förnamn, e-post och en skicka beställningsknapp. Jag har i CSS-filen valt att dölja formuläret och först visa det när Stripe-betalningen gått igenom, det vill säga när `session.status == 'complete'`.
+När vi har fått till ett bra formulär vill vi även kunna använda datan från formuläret till något. I `order.html` lägger vi först till ett formulär, som i detta fallet enbart innehåller förnamn, e-post och en skicka beställningsknapp. Jag har i CSS-filen valt att dölja formuläret och först visa det när Stripe-betalningen gått igenom, det vill säga när `session.status == 'complete'`. Det gör vi med en klass `visible` som vi lägger till från JavaScript:
+
+```css
+/* forms.css */
+.order-form {
+  display: none;
+}
+
+.order-form.visible {
+  display: block;
+}
+```
 
 ```html
 <!-- order.html -->
 <form id="order-form" class="order-form">
     <label for="firstname">Förnamn</label>
-    <input class="input" type="text" name="firstname" id="firstname" required>
+    <input class="input" type="text" name="firstname" id="firstname" autocomplete="given-name" required>
 
-    <label for="email">E-post (fylls i via Stripe)</label>
-    <input class="input" type="email" disabled="disabled" name="email" id="email" required>
+    <label for="email">E-post (hämtas från din betalning)</label>
+    <input class="input" type="email" readonly name="email" id="email">
 
     <input type="submit" id="send-order" class="button" value="Skicka beställning">
 </form>
 ```
 
-I `order.js` skapar vi en `EventListener` för `submit`-eventet på vårt formulär.
+Vi använder `readonly` och inte `disabled` på e-postfältet. Ett `disabled` fält tas **inte** med i `FormData`, så `formData.get("email")` skulle ge `null`. Ett `readonly` fält kan inte ändras av användaren men skickas med. Vi fyller i fältet med e-postadressen från Stripe-sessionen (`session.customer_email`) och visar formuläret när betalningen är genomförd. Det gör vi i `if (session.status == 'complete')`-grenen som vi skrev i [Integrera Stripe](/kunskap/integrera_stripe), istället för `console.log(session)`:
 
 ```javascript
 // order.js
 const orderForm = document.getElementById("order-form")
+
+if (session.status == 'complete') {
+  document.getElementById("email").value = session.customer_email
+  orderForm.classList.add("visible")
+}
+```
+
+Notera att `orderForm` hämtas på modulnivå och att `session` är den variabel på modulnivå som vi skapade i den andra övningen. I `order.js` skapar vi en `EventListener` för `submit`-eventet på vårt formulär.
+
+```javascript
+// order.js
 orderForm.addEventListener("submit", handleSubmit)
 
 async function handleSubmit(event) {
@@ -207,16 +257,51 @@ Vi kan nu komma åt de enskilda delar av `formData` objektet genom att använda 
 // order.js
 const orderData = {
     name: formData.get("firstname"),
-    email: formData.get("email"),
-    payment_id: // hämta från sparat instans
+    email: session.customer_email,
+    payment_id: session.payment_id,
     api_key: auth.api_key,
 }
 ```
 
-När vi har skapat en ny order i Lager API:t får vi tillbaka det nya objektet där det finns ett `id` som vi sedan kan använda för att skapa `order_items` som läggs till den ordern vi precis skapat.
+`session` är objektet vi fick från `/stripe/session-status` och sparade i en variabel på modulnivå (`let session`) i [Integrera Stripe](/kunskap/integrera_stripe). Den måste ligga utanför `if`-blocket, annars kommer inte `handleSubmit` åt den. E-postadressen kan vi alltså läsa både från formuläret och direkt från `session`.
+
+Jag har valt att lägga anropen mot API:t i en egen modul, `models/orders.js`. `createOrder` skickar en POST till `/orders` och `addOrderItem` en POST till `/order_items`. API:t svarar med ett objekt där själva ordern ligger under `data`, så det nya ordernumret är `result.data.id`.
+
+```javascript
+// models/orders.js
+import auth from "./auth.js"
+
+async function post(path, body) {
+  const response = await fetch(`${auth.api_url}/${path}`, {
+    body: JSON.stringify(body),
+    headers: {
+      'content-type': 'application/json'
+    },
+    method: "POST",
+  })
+
+  return await response.json()
+}
+
+const orders = {
+  createOrder: (orderData) => post("orders", orderData),
+  addOrderItem: (orderItemData) => post("order_items", orderItemData),
+}
+
+export default orders
+```
+
+När vi har skapat en ny order i Lager API:t får vi alltså tillbaka det nya objektet där `data.id` är ordens id, som vi sedan kan använda för att skapa `order_items` som läggs till den ordern vi precis skapat. Vi lägger det i `handleSubmit`, efter att vi har byggt `orderData`.
 
 ```javascript
 // order.js
+import orders from "../models/orders.js"
+
+// i handleSubmit, efter att orderData är byggt
+const cart = JSON.parse(localStorage.getItem("cart") || "{}")
+const newOrder = await orders.createOrder(orderData)
+const newOrderId = newOrder.data.id
+
 for (let product in cart) {
     const orderItemData = {
         order_id: newOrderId,
@@ -225,6 +310,18 @@ for (let product in cart) {
         api_key: auth.api_key,
     }
 
-    await orders.addOrderItem(orderItemData) // jag valde att skapa en models/orders.js fil för att hantera ordrar
+    await orders.addOrderItem(orderItemData)
 }
+```
+
+Efter att alla `order_items` är skapade ska varukorgen tömmas och räknaren från del 3 (siffran på varukorgsikonen) uppdateras. Om du bara gör `localStorage.removeItem("cart")` står räknaren kvar tills sidan laddas om. Låt därför `cart.js` exportera en funktion som både tömmer varukorgen och uppdaterar räknaren, och anropa den från `order.js`. Så här kan den se ut, anpassa efter hur du har byggt räknaren:
+
+```javascript
+// cart.js
+function clearCart() {
+  localStorage.removeItem("cart")
+  updateCartCount() // din funktion som skriver ut räknaren
+}
+
+export { instantiateCartButtons, clearCart }
 ```

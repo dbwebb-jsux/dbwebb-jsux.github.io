@@ -11,7 +11,9 @@ Du bör ha jobbat igenom kmom02, lämnat in och skapat en ny branch `kmom03`. Du
 
 ## Knappar för att lägga till i varukorgen
 
-Jag kommer i exemplet utgå från den produktlistningen som jag har i `index.html` och JavaScript koden i `main.js` som skriver ut den produktlistningen. I `main.js`-filen använder jag `map`-för att iterera över produkterna som jag har hämtat från API:t. Här lägger jag till ett `span` element med klassen `add-to-cart` och den specifika produktens id som id för att lägga till varor i varukorgen.
+Jag kommer i exemplet utgå från den produktlistningen som jag har i `index.html` och JavaScript koden i `main.js` som skriver ut den produktlistningen. I `main.js`-filen använder jag `map`-för att iterera över produkterna som jag har hämtat från API:t. Här lägger jag till ett `span` element med klassen `add-to-cart` och den specifika produktens id i ett `data-product-id`-attribut för att lägga till varor i varukorgen.
+
+Produktmarkeringen nedan är ett exempel från min webbshop. Det enda som är nödvändigt är knappen (`span.add-to-cart`), lägg till den i din egen markup. Resten (`.bottom`, `<p>` osv.) behöver du inte kopiera.
 
 ```javascript
 // main.js
@@ -20,7 +22,7 @@ products.map((product) => {
     <img src="${product.image_url}" alt="Album art ${product.name}" />
     <div class="bottom">
         <p>${product.name}</p>
-        <span class="add-to-cart" id="${product.id}">+</span>
+        <span class="add-to-cart" data-product-id="${product.id}">+</span>
     </div>    
 </div>`
   }).join("\n")
@@ -44,7 +46,7 @@ Jag skapar sedan filen `cart.css` som jag lägger till i `head`-elementet. Här 
 }
 ```
 
-Vi skapar nu `cart.js` som kommer innehålla JavaScript-koden för vår varukorg och lägger till den som de andra JavaScript-filerna i `head`-delen. Vi vill nu koppla en `eventListener` till de knapparna som vi precis skapade i `main.js`. Vi gör det genom funktionen `instantiateCartButtons` som vi sedan exporterar från filen.
+Vi skapar nu `cart.js` som kommer innehålla JavaScript-koden för vår varukorg. Du behöver inte lägga till `cart.js` i `head`, eftersom `main.js` importerar den (se nedan) och då laddas den bara en gång. Vi vill nu koppla en `eventListener` till de knapparna som vi precis skapade i `main.js`. Vi gör det genom funktionen `instantiateCartButtons` som vi sedan exporterar från filen.
 
 ```javascript
 // cart.js
@@ -55,7 +57,7 @@ function instantiateCartButtons() {
 }
 
 function addToCart(event) {
-  console.log(event.target.id)
+  console.log(event.currentTarget.dataset.productId)
 }
 
 export { instantiateCartButtons }
@@ -74,7 +76,7 @@ productList.innerHTML = products.map((product) => {
     <img src="${product.image_url}" alt="Album art ${product.name}" />
     <div class="bottom">
         <p>${product.name}</p>
-        <span class="add-to-cart" id="${product.id}">+</span>
+        <span class="add-to-cart" data-product-id="${product.id}">+</span>
     </div>    
 </div>`
 }).join("\n")
@@ -88,12 +90,14 @@ instantiateCartButtons()
 
 Vi kan nu börja med att lägga till saker i varukorgen i funktionen `addToCart`, som anropas från `instantiateCartButtons`. Vi kommer som i kmom02 använda oss av LocalStorage för att hantera varukorgen. Vi kan bara spara ner strängar till LocalStorage, men vi använder os av `JSON.parse`  och `JSON.stringify` ([Dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON)) för att göra om objekt till strängar och omvänt.
 
-Vi hämtar eller skapar först varukorgen utifrån LocalStorage eller ett tomt objekt. Sedan kollar vi om produkten redan finns i varukorgen och lägger då till ytterligare annars lägger vi till produkten i varukorgen. Vi avslutar med med att göra objektet till en sträng igen och sedan 
+Vi hämtar eller skapar först varukorgen utifrån LocalStorage eller ett tomt objekt. Sedan kollar vi om produkten redan finns i varukorgen och lägger då till ytterligare annars lägger vi till produkten i varukorgen. Vi avslutar med att göra objektet till en sträng igen och sedan sparar det i LocalStorage.
+
+Vi använder `event.currentTarget` och inte `event.target`. `currentTarget` är elementet som vi kopplade lyssnaren till (knappen), medan `target` är det innersta element som klickades på, vilket kan vara ett barn till knappen, till exempel en ikon.
 
 ```javascript
 // cart.js
 function addToCart(event) {
-  const productID = event.target.id
+  const productID = event.currentTarget.dataset.productId
   let cart = JSON.parse(localStorage.getItem("cart") || "{}")
 
   if (cart[productID]) {
@@ -142,7 +146,7 @@ Högst upp i `index.html` lägger jag i det elementet som jag vill ska innehåll
 <!-- resten av koden -->
 ```
 
-I filen `cart.css` lägger jag till följande CSS för att designa varukorgen. Jag använder `position: absolute;` för att lägga varukorgen utanför det normala flödet så det ser ut som den är ovanför resten av sidan. Just nu kan du inte se varukorgen men om du kommentarer ut `display: none;` bör den visas som att den tar upp knappt hälften av skärmen.
+I filen `cart.css` lägger jag till följande CSS för att designa varukorgen. Jag använder `position: fixed;` för att lägga varukorgen utanför det normala flödet och fästa den mot webbläsarfönstret, så den ligger ovanför resten av sidan oavsett hur långt vi har scrollat. Bredden är `min(40rem, 100vw)`, så den är högst 40rem bred men aldrig bredare än skärmen (viktigt på mobiler). Just nu kan du inte se varukorgen men om du kommenterar ut `display: none;` bör den visas till höger på skärmen.
 
 ```css
 /* cart.css */
@@ -153,11 +157,11 @@ I filen `cart.css` lägger jag till följande CSS för att designa varukorgen. J
 
 .cart-content {
     display: none;
-    position: absolute;
+    position: fixed;
     top: 1vh;
     right: 0;
     height: 98vh;
-    width: 40vw;
+    width: min(40rem, 100vw);
     background-color: var(--background-color);
     border-top-left-radius: 1.75rem;
     border-bottom-left-radius: 1.75rem;
@@ -175,7 +179,13 @@ Vi lägger även till selektorn `.cart-content.active` i `cart.css`. När vi har
 .cart-content.active {
     display: block;
 }
+
+body.cart-open {
+    overflow: hidden;
+}
 ```
+
+Klassen `body.cart-open` används för att stoppa scrollningen av sidan bakom varukorgen. Vi sätter alltså klasser i JavaScript och låter CSS sköta utseendet, istället för att sätta inline-stilar.
 
 Vi kan nu börja titta på logiken för att öppna och stänga varukorgen. Vi fortsätter med denna kod i `cart.js`. Först ser vi till att hämta ut de element som vi vill påverka och skapar sedan en `eventListener` för `cart`.
 
@@ -186,26 +196,30 @@ const cart = document.getElementById("cart")
 cart.addEventListener("click", toggleCart)
 ```
 
-I funktion `toggleCart` sätter vi först `style.top` attributet till hur långt vi har scrollat ner på sidan plus 1% av höjden av webbläsar fönstret. 1% av höjden motsvarar `1vh` som vi satte i CSS filen. Sedan togglar vi klassen `active` på varukorgselementet. När vi använder funktionen `toggle` läggs klassen till om den inte redan finns på elementet. Om klassen redan finns tas den bort.
+I funktionen `toggleCart` togglar vi klassen `active` på varukorgselementet. När vi använder funktionen `toggle` läggs klassen till om den inte redan finns på elementet. Om klassen redan finns tas den bort. Vi sätter samma sak på `body` med klassen `cart-open`, vilket gör att vi inte kan scrolla på sidan när varukorgen är öppen. Är varukorgen öppen anropar vi även funktionen `renderCartProducts()` som renderar produkterna.
 
-Vi kollar sedan om klassen finns där och kapar då bort all `overflow` (det som finns utanför webbläsarfönstret) vilket göra att vi inte kan scrolla på sidan när varukorgen är öppen. Vi anropar även funktionen `renderCartProducts()` som renderar produkterna.
+När man lägger till en produkt vill vi att varukorgen alltid ska vara öppen och uppdaterad, inte öppnas och stängas om vartannat klick. Därför har vi även en funktion `openCart` som alltid öppnar och renderar, och som `addToCart` använder.
 
 ```javascript
 // cart.js
 function toggleCart() {
-  cartContent.style.top = `${(window.scrollY + document.documentElement.clientHeight / 100)}px`
-  cartContent.classList.toggle("active")
+  const isOpen = cartContent.classList.toggle("active")
 
-  if (cartContent.classList.contains("active")) {
-    document.body.style.overflow = "hidden"
+  document.body.classList.toggle("cart-open", isOpen)
+
+  if (isOpen) {
     renderCartProducts()
-  } else {
-    document.body.style.overflow = "auto"
   }
+}
+
+function openCart() {
+  cartContent.classList.add("active")
+  document.body.classList.add("cart-open")
+  renderCartProducts()
 }
 ```
 
-I `renderCartProducts()` hämtar vi ut vår varukorgsobjekt från LocalStorage och renderar ut varje produkt med det antal som ligger i varukorgen. Hela koden för `cart.js` ser alltså ut på detta sättet. Filen `models/products.js` kan ni skapa själv för att strukturera koden på ett bra sätt.
+I `renderCartProducts()` hämtar vi ut vår varukorgsobjekt från LocalStorage och renderar ut varje produkt med det antal som ligger i varukorgen. Hela koden för `cart.js` ser alltså ut på detta sättet. Filen `models/products.js` använder vi för att hämta produkter från API:t, den visas strax efter listningen.
 
 ```javascript
 // cart.js
@@ -219,15 +233,19 @@ const closeCart = document.getElementById("close-cart")
 closeCart.addEventListener("click", toggleCart)
 
 function toggleCart() {
-  cartContent.style.top = `${(window.scrollY + document.documentElement.clientHeight / 100)}px`
-  cartContent.classList.toggle("active")
+  const isOpen = cartContent.classList.toggle("active")
 
-  if (cartContent.classList.contains("active")) {
-    document.body.style.overflow = "hidden"
+  document.body.classList.toggle("cart-open", isOpen)
+
+  if (isOpen) {
     renderCartProducts()
-  } else {
-    document.body.style.overflow = "auto"
   }
+}
+
+function openCart() {
+  cartContent.classList.add("active")
+  document.body.classList.add("cart-open")
+  renderCartProducts()
 }
 
 function instantiateCartButtons() {
@@ -237,7 +255,7 @@ function instantiateCartButtons() {
 }
 
 function addToCart(event) {
-  const productID = event.target.id
+  const productID = event.currentTarget.dataset.productId
   let cart = JSON.parse(localStorage.getItem("cart") || "{}")
 
   if (cart[productID]) {
@@ -248,7 +266,7 @@ function addToCart(event) {
 
   localStorage.setItem("cart", JSON.stringify(cart))
 
-  toggleCart()
+  openCart()
 }
 
 async function renderCartProducts() {
@@ -260,8 +278,8 @@ async function renderCartProducts() {
     for (let product in cart) {
       const productInfo = await products.fetchProduct(product)
       const cartItem = `<div class="cart-item">
-    <img src="${productInfo.data.image_url}" alt="Album art ${productInfo.data.name}" />
-    <p>${productInfo.data.name}</p><p>Antal: ${cart[product]}</p>
+    <img src="${productInfo.image_url}" alt="Album art ${productInfo.name}" />
+    <p>${productInfo.name}</p><p>Antal: ${cart[product]}</p>
 </div>`
 
       cartItems.push(cartItem)
@@ -275,3 +293,33 @@ async function renderCartProducts() {
 
 export { instantiateCartButtons }
 ```
+
+
+### models/products.js
+
+Filen `models/products.js` hämtar produkter från Lager API:t med `auth` från [Lager API:t](/kunskap/lager_apit). API:t svarar med ett objekt där själva datan ligger under nyckeln `data`, så vi plockar ut den direkt i modulen. `fetchProduct` returnerar alltså själva produkten (`{ id, name, image_url, ... }`) och `fetchAll` en array med produkter.
+
+```javascript
+// models/products.js
+import auth from "./auth.js"
+
+const products = {
+  fetchAll: async function fetchAll() {
+    const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+    const result = await response.json()
+
+    return result.data
+  },
+
+  fetchProduct: async function fetchProduct(id) {
+    const response = await fetch(`${auth.api_url}/products/${id}?api_key=${auth.api_key}`)
+    const result = await response.json()
+
+    return result.data
+  }
+}
+
+export default products
+```
+
+Använd samma form på `fetchProduct` i kommande övningar, då slipper du skriva `.data.name`, utan bara `product.name`.

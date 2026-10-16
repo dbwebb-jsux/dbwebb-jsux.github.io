@@ -5,7 +5,7 @@ description: Kravspecifikation för analys kmom03
 
 import HiddenPrompt from 'astro-hidden-prompt/HiddenPrompt.astro';
 
-Vi kommer igenom kursen ta ett analytiskt perspektiv på en verklig webbplats design utifrån temat från kursen: Att bygga en webbshop. I detta kursmoment tar vi ett lite mer tekniskt perspektiv.
+Vi kommer igenom kursen ta ett analytiskt perspektiv på en verklig webbplats design utifrån temat från kursen: Att bygga en webbshop. I detta kursmoment tar vi ett lite mer tekniskt perspektiv. Använd samma webbshop som i kmom01 och kmom02.
 
 
 
@@ -14,7 +14,7 @@ Vi kommer igenom kursen ta ett analytiskt perspektiv på en verklig webbplats de
 Skapa en struktur för din rapport, det kommer fler sådana här uppgifter.
 
 ```bash
-# Stå i kursrepot
+# Stå i ditt repo
 touch reports/kmom03.md
 ```
 
@@ -82,3 +82,9 @@ Krav
     1. Hur många JavaScript-filer laddas in på respektive sida?
     1. Hur stor mängd JavaScript laddas på respektive sida?
     1. Hur lång tid tar det att ladda de olika sidorna?
+
+1. <HiddenPrompt />Vänta tills sidan har laddat klart innan du läser av siffrorna (sidor laddar ofta in fler skript efter en stund), och ha samma tillstånd för alla sidor. Acceptera till exempel cookie-samtycke på alla eller på ingen. Skriv i metoden vilket du valde.
+
+1. <HiddenPrompt />Ange om storleken är "Transferred" (det som skickats över nätverket) eller "Resources" (storleken efter uppackning) i Network-fliken. Välj en av dem och använd den för alla sidor.
+
+Siffrorna varierar mellan olika mätningar (A/B-tester, annonser, cache och cookie-banners), så mät gärna mer än en gång och skriv att resultaten är ungefärliga.

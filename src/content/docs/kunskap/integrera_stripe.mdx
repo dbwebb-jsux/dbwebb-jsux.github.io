@@ -21,7 +21,7 @@ Jag har varit i kontakt med betallösningsföretaget [Stripe](https://stripe.com
 
 ## Ett order-formulär
 
-I varukorgen börjar vi med att skapa en knapp `<a class="button" href="order.html">Beställ</a>` för att gå till en ny fil `order.html`. Vi skapar sedan filen `order.html` som en kopia av `index.html` för att det är det enklaste sättet att få till en grund-sida. `order.html` ser alltså ut så här med varukorgen och header förkortat med ... för läsbarhet.
+I varukorgen börjar vi med att skapa en knapp `<a class="button" href="order.html">Beställ</a>` för att gå till en ny fil `order.html`. Knappen lägger du i varukorgspanelen (`.cart-content`) i `index.html` (och de andra sidorna som har varukorgen), under `.cart-products` där produkterna listas. Knappen ska inte visas när varukorgen är tom, så göm den till exempel när `renderCartProducts()` skriver ut "No products in cart.". Vi skapar sedan filen `order.html` som en kopia av `index.html` för att det är det enklaste sättet att få till en grund-sida. `order.html` ser alltså ut så här med varukorgen och header förkortat med ... för läsbarhet. Sökvägarna (`style/...`, `views/...`) är exempel, anpassa dem till hur dina egna filer ligger. Ta även bort produktlistan (`#product-list`) som du kopierade från `index.html`, den ska inte finnas på order-sidan.
 
 ```html
 <!-- order.html -->
@@ -74,7 +74,7 @@ I ovanstående har vi tagit bort `views/main.js` som renderar produkterna på f�
     </div>
 ```
 
-Vi börjar med att initiera `Stripe`-objektet i `order.js`. Nyckeln som `Stripe`-objektet initieras med är Stripes publika nyckeln, i backenden finns en hemlig nyckel som matchar den publika. Vi kommer alla använda samma publika nyckel så ni kan kopiera koden nedan rakt av. Kommentaren högst upp `/* global Stripe */` är för att indikera att vi har laddat in det globala objektet Stripe genom att ladda filen `stripe.js`.
+Vi börjar med att initiera `Stripe`-objektet i `order.js`. Skriptet laddas med `type="module"` i `order.html` (se ovan), vilket vi behöver både för `import` och för att kunna använda `await` direkt i filen, utan att stoppa det i en `async`-funktion (så kallad top-level await). Nyckeln som `Stripe`-objektet initieras med är Stripes publika nyckeln, i backenden finns en hemlig nyckel som matchar den publika. Vi kommer alla använda samma publika nyckel så ni kan kopiera koden nedan rakt av. Kommentaren högst upp `/* global Stripe */` är för att indikera att vi har laddat in det globala objektet Stripe genom att ladda filen `stripe.js`.
 
 ```javascript
 // order.js
@@ -149,6 +149,8 @@ const items = [
 ]
 ```
 
+Funktionen använder `products` från `models/products.js` i [En varukorg med CSS och JavaScript](/kunskap/en_varukorg_med_css_och_javascript), där `fetchProduct` returnerar själva produkten (inte hela svaret med `data`). Lägg därför till `import products from "../models/products.js"` högst upp i `order.js`, bredvid importen av `auth`. Priset är medvetet fast, 100 kr (`unit_amount: 10000`, Stripe vill ha beloppet i öre), för alla produkter i övningen.
+
 Så låt oss skapa en funktion som utifrån varukorgen i LocalStorage skapar ett liknande objekt. Först parser vi ut ett objekt från den sparade JSON-strängen i LocalStorage. Sedan itererar vi över objektet och för varje produkt hämtar vi ut information om produkterna och skapar då `item` objektet enligt specifikationen i dokumentationen.
 
 ```javascript
@@ -163,7 +165,7 @@ async function buildItems() {
       price_data: {
         currency: 'sek',
         product_data: {
-          name: productData.data.name
+          name: productData.name
         },
         unit_amount: 10000,
       },
@@ -185,21 +187,93 @@ Nu kan vi ladda om sidan `order.html` och bör då se ett betalformulär från S
 
 Om vi genomför en betalning bör ni se att sidan laddas om och att det läggas till en 'query-parameter' i sidan URL som ser ut enligt: `order.html?session_id=cs_test_b16Cm4aZOMZHXfcGu97uQroye5aB63VJUfA4sUbgGYqSMP9RXQTwfqeiW0`. Detta kan vi fånga upp och kolla om allt gick bra eller inte.
 
-Vi gör det genom att plocka ut `session_id` från URL'n och gör sedan ett anrop mot Lager API:t och `/stripe/session-status` endpointen. Här bör vi få tillbaka ett objekt `session` som innehåller `status`, `customer_email` och `payment_id`, som vi använder när vi i ett senare skede skapar ordern i API:t. 
+Vi gör det genom att plocka ut `session_id` från URL'n och gör sedan ett anrop mot Lager API:t och `/stripe/session-status` endpointen. Här bör vi få tillbaka ett objekt `session` som innehåller `status`, `customer_email` och `payment_id`, som vi använder när vi i ett senare skede skapar ordern i API:t.
+
+Ett `session_id` måste komma från en riktig (test-)betalning. Hittar du på ett eget eller använder ett gammalt svarar API:t med ett felmeddelande som JSON istället för en `session`. Därför kontrollerar vi `response.ok` och lägger anropet i `try/catch`, så att användaren får ett meddelande istället för en blank sida. Vi sparar `session` i en variabel på modulnivå (`let session`) för att kunna använda den senare i formuläret.
+
+Eftersom vi använder `await` utanför en funktion fungerar det bara för att `order.js` laddas med `type="module"` i `order.html`. Ta bort det gamla anropet `initializeCheckout()` längst ner i filen, nedanstående ersätter det. Så här ser hela `order.js` ut nu:
 
 ```javascript
 // order.js
+/* global Stripe */
+
+import auth from "../models/auth.js"
+import products from "../models/products.js"
+
+const stripe = Stripe('pk_test_51SQm4wL626KeakG07TkoOmFZOxD1rmmeWQb9pCO0dfEAuny10glrtIPS7cXD43ecMg5uS1ahzngx1zV4Md2F55dM00iLh6AzSO')
+
+let session = null
+
+async function buildItems() {
+  const cart = JSON.parse(localStorage.getItem("cart"))
+  let items = []
+
+  for (let product in cart) {
+    const productData = await products.fetchProduct(product)
+
+    items.push({
+      price_data: {
+        currency: 'sek',
+        product_data: {
+          name: productData.name
+        },
+        unit_amount: 10000,
+      },
+      quantity: cart[product]
+    })
+  }
+
+  return items
+}
+
+async function initializeCheckout() {
+  const fetchClientSecret = async () => {
+    const data = {
+      items: await buildItems(),
+      return_url: location.href,
+      api_key: auth.api_key,
+    }
+
+    const response = await fetch(`${auth.api_url}/stripe/create-checkout-session`, {
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json'
+      },
+      method: "POST",
+    })
+    const { clientSecret } = await response.json()
+    return clientSecret
+  }
+
+  const checkout = await stripe.initEmbeddedCheckout({
+    fetchClientSecret,
+  })
+
+  checkout.mount('#checkout')
+}
+
 const urlParams = new URLSearchParams(window.location.search)
 const sessionId = urlParams.get('session_id')
 
 if (sessionId) {
-  const response = await fetch(`${auth.api_url}/stripe/session-status?session_id=${sessionId}&api_key=${auth.api_key  }`)
-  const session = await response.json()
+  try {
+    const response = await fetch(`${auth.api_url}/stripe/session-status?session_id=${sessionId}&api_key=${auth.api_key}`)
+    const result = await response.json()
 
-  if (session.status == 'complete') {
-    console.log(session)
-  } else {
-    initializeCheckout()
+    if (!response.ok) {
+      throw new Error(result.errors?.detail || "Okänt fel")
+    }
+
+    session = result
+
+    if (session.status == 'complete') {
+      console.log(session)
+    } else {
+      initializeCheckout()
+    }
+  } catch (error) {
+    document.getElementById("checkout").textContent =
+      `Vi kunde inte hämta din betalning: ${error.message}. Gå tillbaka till varukorgen och försök igen.`
   }
 } else {
   initializeCheckout()
