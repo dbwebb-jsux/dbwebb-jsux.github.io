@@ -53,7 +53,7 @@ Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här
 </html>
 ```
 
-Vi fortsätter sedan med att gå in i `style.css`. Där finns redan en `body`-regel. **Ersätt den** med regeln nedan, lägg inte till en ny `body`-regel längst ner i filen (det ger lint-felet `no-duplicate-selectors`). Här vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en såkallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket såtr för 100 procent av viewport height, alltså hur stor browsern är.
+Vi fortsätter sedan med att gå in i `style.css`. Där finns redan en `body`-regel. **Ersätt den** med regeln nedan, lägg inte till en ny `body`-regel längst ner i filen (det ger lint-felet `no-duplicate-selectors`). Här vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en såkallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket står för 100 procent av viewport height, alltså hur stor browsern är.
 
 ```css
 body {
@@ -141,7 +141,7 @@ Som ett passande avslut på denna övning ska vi skriva lite JavaScript för att
 
 Notera att vi har lagt till både en klass och ett id. Vi kommer i kursen använda klasser för att tilldela stil till elementen och id för att koppla oss mot element i JavaScript koden.
 
-Vi skapar nu filen `main.js` och lägger till den i `head`-elementet i `index-html`. Vi kommer inledningsvis enbart ha en JavaScript (precis som att vi just nu bara har en CSS-fil), men kommer senare i kursen skapa lite bättre struktur.
+Vi skapar nu filen `main.js` och lägger till den i `head`-elementet i `index-html`. Vi kommer inledningsvis enbart ha en JavaScript-fil (precis som att vi just nu bara har en CSS-fil), men kommer senare i kursen skapa lite bättre struktur.
 
 Notera nedan att `script` taggen har attributet `type` satt till `module` och att den laddas med `defer`, som säkerställer att hela HTML sidan laddats innan vi kör vårt JavaScript.
 

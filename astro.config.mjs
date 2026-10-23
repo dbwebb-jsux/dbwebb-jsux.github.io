@@ -13,7 +13,13 @@ export default defineConfig({
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/dbwebb-jsux/dbwebb-jsux.github.io' }
 			],
 			sidebar: [
-				{ label: 'Kursöversikt', link: '/' },
+				{ 
+          label: 'Kursöversikt',
+          items: [
+            "",
+            "kunskap/fusk_och_disciplin",
+          ]
+        },
 				{
 					label: "Kursmoment",
 					items: [
