@@ -10,10 +10,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.36.0",
-    "astro": "^5.14.1",
-    "astro-embed": "^0.9.1",
+    "@astrojs/starlight": "^0.42.6",
+    "astro": "^7.3.8",
+    "astro-embed": "^0.14.0",
     "astro-hidden-prompt": "^1.0.0",
-    "sharp": "^0.34.2"
+    "sharp": "^0.35.5"
   }
 }
