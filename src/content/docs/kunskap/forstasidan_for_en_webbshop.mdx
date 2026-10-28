@@ -53,7 +53,7 @@ Vi börjar med att få en grundläggande struktur på plats i `index.html`. Här
 </html>
 ```
 
-Vi fortsätter sedan med att gå in i `style.css`. Där finns redan en `body`-regel. **Ersätt den** med regeln nedan, lägg inte till en ny `body`-regel längst ner i filen (det ger lint-felet `no-duplicate-selectors`). Här vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en såkallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket står för 100 procent av viewport height, alltså hur stor browsern är.
+Vi fortsätter sedan med att gå in i `style.css`. Där finns redan en `body`-regel. **Ersätt den** med regeln nedan, lägg inte till en ny `body`-regel längst ner i filen (det ger lint-felet `no-duplicate-selectors`). Här vill vi nu med hjälp av [flexbox](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox) skapa en så kallad 'sticky footer'. Vi sätter att `body` ska använda sig av flex för att positionera ut de tre elementen (`header`, `main` och `footer`) som är direkt under `body`. Dessa elementen ska vara i en kolumn och minimumshöjden för `body` är `100vh` vilket står för 100 procent av viewport height, alltså hur stor browsern är.
 
 ```css
 body {
@@ -157,7 +157,7 @@ Notera nedan att `script` taggen har attributet `type` satt till `module` och at
 </head>
 ```
 
-I `main.js` börjar vi med att importera `auth`-objektet, som vi exporterade från filen `models/auth.js` i övningen [Lager API:t](../kunskap/lager_apit). Vi skapar sedan en funktion `renderProducts`, som vi sedan anropar. I funktionen använder vi `document.getElementById` för att koppla oss mot `#product-list` elementet som vi skapade i `index.html`.
+I `main.js` börjar vi med att importera `auth`-objektet, som vi exporterade från filen `models/auth.js` i övningen [Lager API:t](lager_apit). Vi skapar sedan en funktion `renderProducts`, som vi sedan anropar. I funktionen använder vi `document.getElementById` för att koppla oss mot `#product-list` elementet som vi skapade i `index.html`.
 
 ```javascript
 import auth from "./models/auth.js"
@@ -212,7 +212,7 @@ renderProducts()
 
 Varje produkt har två bilder: `image_url` är en stor bild (1024 x 1024 pixlar, flera MB) och `thumbnail_url` är en liten variant (400 x 400 pixlar, ca 40 kB). I en lista där bilden visas liten använder vi `thumbnail_url`, det gör att sidan laddas snabbare och använder mindre data. Den stora bilden sparar vi till när en enskild produkt visas stor.
 
-Om du laddar om sidan bör du kunna se bilder och några rubriker. Jag **lade till** följande i min `style.css` för att få ner bildern lite i storlek och placera bild och text bredvid varann istället.
+Om du laddar om sidan bör du kunna se bilder och några rubriker. Jag **la till** följande i min `style.css` för att få ner bilderna lite i storlek och placera bild och text bredvid varann istället.
 
 ```css
 .product {

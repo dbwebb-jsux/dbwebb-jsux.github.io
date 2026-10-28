@@ -88,7 +88,7 @@ instantiateCartButtons()
 
 ### Själva varukorgshanteringen
 
-Vi kan nu börja med att lägga till saker i varukorgen i funktionen `addToCart`, som anropas från `instantiateCartButtons`. Vi kommer som i kmom02 använda oss av LocalStorage för att hantera varukorgen. Vi kan bara spara ner strängar till LocalStorage, men vi använder os av `JSON.parse`  och `JSON.stringify` ([Dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON)) för att göra om objekt till strängar och omvänt.
+Vi kan nu börja med att lägga till saker i varukorgen i funktionen `addToCart`, som anropas från `instantiateCartButtons`. Vi kommer som i kmom02 använda oss av LocalStorage för att hantera varukorgen. Vi kan bara spara ner strängar till LocalStorage, men vi använder oss av `JSON.parse`  och `JSON.stringify` ([Dokumentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON)) för att göra om objekt till strängar och omvänt.
 
 Vi hämtar eller skapar först varukorgen utifrån LocalStorage eller ett tomt objekt. Sedan kollar vi om produkten redan finns i varukorgen och lägger då till ytterligare annars lägger vi till produkten i varukorgen. Vi avslutar med att göra objektet till en sträng igen och sedan sparar det i LocalStorage.
 

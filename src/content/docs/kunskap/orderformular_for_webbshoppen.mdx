@@ -13,7 +13,7 @@ import inputPassword from "../../../assets/inputs/input-password.png";
 
 
 
-## Förskunskaper
+## Förkunskaper
 
 Du har jobbat igenom övningen [Integrera Stripe i orderformuläret](/kunskap/integrera_stripe) och har en `order.html` sida med en `order.js` på plats.
 
@@ -33,7 +33,7 @@ Det helt vanliga text input fältet ger ett vanligt tangentbord och ingen klient
 
 
 
-Om man har ett fält där användaren ska ange ett tal som man kan räkna med, till exempel antal, kan man använda sig av `number`. Detta gör att tangentbordet på mobila enheter bytts ut mot ett numerisk och att det inte går att fylla i annat än karaktärer relaterade till siffror.
+Om man har ett fält där användaren ska ange ett tal som man kan räkna med, till exempel antal, kan man använda sig av `number`. Detta gör att tangentbordet på mobila enheter bytts ut mot ett numeriskt och att det inte går att fylla i annat än karaktärer relaterade till siffror.
 
 Använd däremot **inte** `number` för siffror som inte är tal, som postnummer, telefonnummer, personnummer eller kortnummer. Ett postnummer som "379 79" innehåller ett mellanslag, ett postnummer kan börja med 0 och man ska aldrig räkna med det, och `number` ger dessutom upp- och nedpilar och ändrar värdet när man scrollar. Använd istället `type="text"` med `inputmode="numeric"` (som ger det numeriska tangentbordet på mobilen) och ett `pattern`:
 
@@ -49,7 +49,7 @@ Använd däremot **inte** `number` för siffror som inte är tal, som postnummer
 
 
 
-Om användaren skall fylla i sin e-postadress kan det vara bra med et input av typen `email`. Det underlättar för användaren när man skall använda @.
+Om användaren skall fylla i sin e-postadress kan det vara bra med ett input av typen `email`. Det underlättar för användaren när man skall använda @.
 
 ```html
 <input type="email">
@@ -59,7 +59,7 @@ Om användaren skall fylla i sin e-postadress kan det vara bra med et input av t
 
 
 
-Vid ifyllning av telefonnummer kan det vara fördelaktigt att använda input av typen `tel`. Där får användaren upp ett numerisk tangentbord, som ser ut som det man använder när man skall ringa från en telefon.
+Vid ifyllning av telefonnummer kan det vara fördelaktigt att använda input av typen `tel`. Där får användaren upp ett numeriskt tangentbord, som ser ut som det man använder när man skall ringa från en telefon.
 
 ```html
 <input type="tel">
