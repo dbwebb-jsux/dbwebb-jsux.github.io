@@ -12,17 +12,19 @@ import { readFile, writeFile } from 'node:fs/promises';
 const PLAYLIST_ID = 'PLVDGHjA5-1qY';
 const DOCS = new URL('../src/content/docs/', import.meta.url);
 
+// The intro uses the presenters from the title ("... kmom01 med Emil (och Mattias)"),
+// falling back to the usual line-up when the title doesn't say.
 const TYPES = {
   'genomgång': {
     heading: 'Veckans genomgång',
-    intro: 'Tisdag eftermiddag har Emil genomgång av veckans material och uppgifter, efter genomgången laddas videon upp och finns här.',
+    intro: (who = 'Emil') => `${who} går igenom veckans material och uppgifter i videon nedan.`,
   },
   'föreläsning': {
     heading: 'Veckans föreläsning',
-    intro: 'Onsdag eftermiddag håller Kenneth, Mattias och Emil en gemensam föreläsning, efter föreläsningen laddas videon upp och finns här.',
+    intro: (who = 'Kenneth, Mattias och Emil') => `${who} håller veckans föreläsning, här kan du se inspelningen.`,
   },
 };
-const TITLE = /^\[jsux\]\s*(genomgång|föreläsning)\s*kmom\s*(\d{1,2})\b/i;
+const TITLE = /^\[jsux\]\s*(genomgång|föreläsning)\s*kmom\s*(\d{1,2})\b(?:.*?\bmed\s+(.+?))?\s*$/i;
 const IMPORT = "import { YouTube } from 'astro-embed';";
 
 const decode = (s) => s.replace(/&(amp|lt|gt|quot|#39);/g, (_, e) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" }[e]));
@@ -42,7 +44,7 @@ function parseVideos(xml) {
     const title = decode(entry.match(/<title>(.*?)<\/title>/)?.[1] ?? '');
     const published = entry.match(/<published>(.*?)<\/published>/)?.[1] ?? '';
     const m = title.match(TITLE);
-    if (id && m) videos.push({ id, published, type: m[1].toLowerCase(), kmom: m[2].padStart(2, '0') });
+    if (id && m) videos.push({ id, published, type: m[1].toLowerCase(), kmom: m[2].padStart(2, '0'), who: m[3] });
   }
   // Oldest first, so several videos for one kmom end up in the order they were published.
   return videos.sort((a, b) => a.published.localeCompare(b.published));
@@ -52,7 +54,7 @@ function embed(id) {
   return `<YouTube posterQuality="max" id="${id}" />`;
 }
 
-function addVideo(text, { id, type }) {
+function addVideo(text, { id, type, who }) {
   const { heading, intro } = TYPES[type];
   const lines = text.split('\n');
   const find = (re, from = 0) => { for (let i = from; i < lines.length; i++) if (re.test(lines[i])) return i; return -1; };
@@ -70,10 +72,13 @@ function addVideo(text, { id, type }) {
 
   // New section, at the end of "Läsa & titta" (or before "Projektets upplägg" in kmom10).
   const watch = find(/^## Läsa & titta\s*$/);
-  const anchor = watch !== -1 ? find(/^## /, watch + 1) : find(/^## Projektets upplägg\s*$/);
+  let anchor = watch !== -1 ? find(/^## /, watch + 1) : find(/^## Projektets upplägg\s*$/);
+  // The genomgång (Tuesday) always comes before the föreläsning (Wednesday).
+  const lecture = type === 'genomgång' ? find(new RegExp(`^#{2,3} ${TYPES['föreläsning'].heading}\\s*$`)) : -1;
+  if (lecture !== -1) anchor = lecture;
   if (anchor === -1) throw new Error('Found no place to add the section');
   const level = watch !== -1 ? '###' : '##';
-  lines.splice(anchor, 0, `${level} ${heading}`, '', intro, '', embed(id), '', '');
+  lines.splice(anchor, 0, `${level} ${heading}`, '', intro(who), '', embed(id), '', '');
   return lines.join('\n');
 }
 
