@@ -1,0 +1,50 @@
+name: Add lecture videos
+
+# Videos are normally published around 15:00 Swedish time on Tuesdays and 12:00 or 15:00 on
+# Wednesdays. Swedish time is UTC+1 during the course (Nov-Jan), so poll every 20 minutes
+# between 11:00 and 18:00 Swedish time on those days, plus one run every morning as a fallback.
+on:
+  schedule:
+    - cron: '*/20 10-16 * * 2,3'
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: add-youtube-videos
+  cancel-in-progress: false
+
+jobs:
+  add-videos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Add new videos from the YouTube playlist
+        run: node scripts/add-youtube-videos.mjs
+      - name: Check if anything changed
+        id: changes
+        run: |
+          if git diff --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Make sure the site still builds
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          npm ci
+          npm run build
+      - name: Commit and deploy
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/content/docs
+          git commit -m "Add lecture video from the YouTube playlist"
+          git push
+          # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the deploy explicitly.
+          gh workflow run deploy.yml
