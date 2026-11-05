@@ -1,0 +1,63 @@
+---
+title: Uppdatera din fork till 2 blanksteg
+description: Så får du startrepots nya indenteringsregler och lintkontroller in i din fork
+---
+
+Startrepot `dbwebb-jsux/webshop` har uppdaterats. All kod ska nu indenteras med **2 blanksteg**, både JavaScript, HTML och CSS. Verktygen som körs med `npm test` kontrollerar det:
+
+| Språk | Verktyg | Vad som kontrolleras |
+| --- | --- | --- |
+| JavaScript | ESLint | 2 blanksteg och rätt nivå |
+| CSS | Stylelint | 2 blanksteg och rätt nivå |
+| HTML | HTMLHint | Bara blanksteg i multiplar av 2 |
+
+:::note
+HTMLHint kontrollerar inte hur djupt elementen ligger. Kontrollera själv att varje nivå får 2 blanksteg mer än sin förälder, även om `npm test` är grön.
+:::
+
+Har du skapat din fork efter uppdateringen behöver du inte göra något. Annars gör du så här.
+
+## Steg för steg
+
+1. Gå till din fork på GitHub och klicka på **Sync fork** och sedan **Update branch** (på `main`).
+
+1. Hämta ändringarna till din dator:
+
+   ```shell
+   git checkout main
+   git pull
+   ```
+
+1. För in ändringarna i din nuvarande kmom-branch, till exempel `kmom03`:
+
+   ```shell
+   git checkout kmom03
+   git merge main
+   ```
+
+1. **Konflikter i `index.html` och `style.css` är väntade.** Ändringen byter indrag i hela filerna och du har ändrat samma filer. Välj **din egen version** (i VS Code: "Accept Current Change" för varje konflikt) och indentera sedan om filen enligt steg 6. Spara och committa:
+
+   ```shell
+   git add .
+   git commit
+   ```
+
+1. Installera de nya verktygen och kontrollera koden:
+
+   ```shell
+   npm install
+   npm test
+   ```
+
+   Du måste köra `npm install`, annars saknas ett nytt tillägg till Stylelint och `npm run stylelint` ger ett felmeddelande.
+
+1. Åtgärda eventuella indragsfel:
+
+   - JavaScript och CSS fixas automatiskt med `npm run eslint:fix` och `npm run stylelint:fix`.
+   - HTML indenterar du om för hand. I VS Code markerar du allt (`Ctrl+A` / `Cmd+A`) och kör **Reindent Lines** via kommandopaletten (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+
+1. Kör `npm test` igen. När allt är grönt pushar du som vanligt.
+
+## Låt editorn göra jobbet
+
+Startrepot har nu en fil `.editorconfig` som säger att koden ska indenteras med 2 blanksteg. Installera tillägget **EditorConfig for VS Code**, så följer editorn inställningen automatiskt när du skriver och formaterar.
