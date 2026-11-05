@@ -29,6 +29,10 @@ const IMPORT = "import { YouTube } from 'astro-embed';";
 
 const decode = (s) => s.replace(/&(amp|lt|gt|quot|#39);/g, (_, e) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" }[e]));
 
+// The presenters end up in the MDX text, so drop anything MDX could read as markup or code
+// ({ } < > [ ] backticks and so on). Names, spaces, commas, "&" and parentheses are kept.
+const cleanWho = (s) => s.replace(/[^\p{L}\p{N}\s,&()'.-]/gu, '').replace(/\s+/g, ' ').trim() || undefined;
+
 async function readFeed() {
   const i = process.argv.indexOf('--feed');
   if (i !== -1) return readFile(process.argv[i + 1], 'utf8');
@@ -44,7 +48,7 @@ function parseVideos(xml) {
     const title = decode(entry.match(/<title>(.*?)<\/title>/)?.[1] ?? '');
     const published = entry.match(/<published>(.*?)<\/published>/)?.[1] ?? '';
     const m = title.match(TITLE);
-    if (id && m) videos.push({ id, published, type: m[1].toLowerCase(), kmom: m[2].padStart(2, '0'), who: m[3] });
+    if (id && m) videos.push({ id, published, type: m[1].toLowerCase(), kmom: m[2].padStart(2, '0'), who: m[3] && cleanWho(m[3]) });
   }
   // Oldest first, so several videos for one kmom end up in the order they were published.
   return videos.sort((a, b) => a.published.localeCompare(b.published));

@@ -34,6 +34,7 @@ jobs:
       - name: Make sure the site still builds
         if: steps.changes.outputs.changed == 'true'
         run: |
+          git diff
           npm ci
           npm run build
       - name: Commit and deploy
