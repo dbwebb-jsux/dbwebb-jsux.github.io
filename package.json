@@ -15,5 +15,9 @@
     "astro-embed": "^0.14.0",
     "astro-hidden-prompt": "^1.0.0",
     "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@emnapi/core": "^1.11.3",
+    "@emnapi/runtime": "^1.11.3"
   }
 }
