@@ -30,33 +30,52 @@ Vi vill alltså kapsla in vår kod som har exakt ett (1) ansvarsområde för att
 
 ## Produktlistningen
 
-Vi vill nu kapsla in all funktionalitet för varje enskild produkt i produktlistningen i en komponent. Jag har i min `views/main.js` en funktion `renderProducts` som skriver ut boxar med produkterna. Ni bör ha något liknande, men det kan ligga i andra filer eller se ut på ett annat sätt. Mappnamn och importsökvägar i exemplen nedan behöver du anpassa till din egen filstruktur (om din `main.js` ligger i roten blir importen `./components/single-product.js`).
+Vi vill nu kapsla in all funktionalitet för varje enskild produkt i produktlistningen i en komponent. Utgångspunkten är `renderProducts` i `views/main.js` som du byggde i övningarna [Förstasidan för en webbshop](/kunskap/forstasidan_for_en_webbshop) och [En varukorg med CSS och JavaScript](/kunskap/en_varukorg_med_css_och_javascript). Har du en annan markup eller andra filnamn, anpassa exemplen nedan efter dem. Importsökvägarna i exemplen förutsätter att `main.js` ligger i `views` som i tidigare kursmoment (om din `main.js` ligger i roten blir importen `./components/single-product.js`).
 
-Markupen i exemplet (till exempel `<span class="add-to-cart" id="...">`) är bara ett exempel. Har du en annan markup, till exempel en `<button>` med `data-product-id`, behåll den. Det viktiga är att knapparna för att lägga till i varukorgen fortfarande fungerar när du bytt till komponenter.
+Markupen är densamma som i kmom03: lägg-till-knappen är `<span class="add-to-cart" data-product-id="...">`, och `instantiateCartButtons()` läser `data-product-id`. Det är viktigt att knapparna fortfarande fungerar när du bytt till komponenter. Har du en annan markup, till exempel en `<button>`, behåll den så länge den har `data-product-id`.
 
 ```javascript
-// main.js
-function renderProducts(products) {
-  return products.map((product) => {
+// views/main.js
+import auth from "../models/auth.js"
+import { instantiateCartButtons } from "./cart.js"
+
+async function renderProducts() {
+  const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+  const result = await response.json()
+  const productList = document.getElementById("product-list")
+
+  const productArray = result.data.map((product) => {
     return `<div class="product">
-      <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
-      <div class="bottom">
-        <p>${product.name}</p>
-        <span class="add-to-cart" id="${product.id}">+</span>
-      </div>
-    </div>`
-  }).join("\n")
+  <img src="${product.thumbnail_url}" alt="Album art ${product.name}" />
+  <h3>${product.name}</h3>
+  <span class="add-to-cart" data-product-id="${product.id}">+</span>
+</div>`
+  })
+
+  productList.innerHTML = productArray.join("\n")
+
+  instantiateCartButtons()
 }
+
+renderProducts()
 ```
 
 I koden ovan ser vi att denna koden är väl lämpad för att göras om till en komponent då den återupprepas ett antal gånger med samma kod även om denna koden ligger i en loop (`map()`). Spara undan koden som finns efter `return` för att återanvändas i ett senare skede. Vi ersätter sedan allt med en webbkomponent, som än så länge ser ut som ett helt vanligt HTML-element, förutom att det innehåller ett bindestreck vilket vanliga HTML-element inte gör.
 
 ```javascript
-// main.js
-function renderProducts(products) {
-  return products.map(() => {
+// views/main.js
+async function renderProducts() {
+  const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+  const result = await response.json()
+  const productList = document.getElementById("product-list")
+
+  const productArray = result.data.map(() => {
     return `<single-product></single-product>`
-  }).join("\n")
+  })
+
+  productList.innerHTML = productArray.join("\n")
+
+  instantiateCartButtons()
 }
 ```
 
@@ -69,13 +88,17 @@ Vi vill nu skicka med data till komponenten så vi har möjlighet att faktiskt v
 JSON innehåller dubbla citattecken (`"`) och om vi lägger strängen i ett attribut med dubbla citattecken måste de skrivas som `&quot;`, annars bryts attributet av. En liten hjälpfunktion löser det (webbläsaren gör om `&quot;` till `"` igen när den läser attributet). Det gör också att produktnamn med citattecken eller apostrofer, som `Guns N' Roses`, fungerar.
 
 ```javascript
-// main.js
+// views/main.js
 function escapeAttribute(text) {
   return text.replaceAll("&", "&amp;").replaceAll('"', "&quot;")
 }
 
-function renderProducts(products) {
-  return products.map((product) => {
+async function renderProducts() {
+  const response = await fetch(`${auth.api_url}/products?api_key=${auth.api_key}`)
+  const result = await response.json()
+  const productList = document.getElementById("product-list")
+
+  const productArray = result.data.map((product) => {
     const data = JSON.stringify({
       id: product.id,
       name: product.name,
@@ -83,7 +106,11 @@ function renderProducts(products) {
     })
 
     return `<single-product product="${escapeAttribute(data)}"></single-product>`
-  }).join("\n")
+  })
+
+  productList.innerHTML = productArray.join("\n")
+
+  instantiateCartButtons()
 }
 ```
 
@@ -93,10 +120,10 @@ function renderProducts(products) {
 
 Låt oss nu registrera komponenten och skapa en JavaScript klass ([Dokumentation för class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)) som behövs för att vi kan lägga till funktionalitet för komponenten.
 
-Högst upp i `views/main.js` lägger jag till att jag importerar en komponent och sedan registrerar den genom att koppla den till komponentens namn i detta fallet `single-product`, som vi använde ovan.
+Högst upp i `views/main.js`, tillsammans med de andra importerna, lägger jag till att jag importerar en komponent och sedan registrerar den genom att koppla den till komponentens namn i detta fallet `single-product`, som vi använde ovan.
 
 ```javascript
-// main.js
+// views/main.js
 import SingleProduct from "../components/single-product.js"
 
 customElements.define('single-product', SingleProduct)
@@ -129,12 +156,10 @@ export default class SingleProduct extends HTMLElement {
 
   connectedCallback() {
     this.innerHTML = `<div class="product">
-      <img src="${this.product.thumbnail_url}" alt="Album art ${this.product.name}" />
-      <div class="bottom">
-        <p>${this.product.name}</p>
-        <span class="add-to-cart" id="${this.product.id}">+</span>
-      </div>
-    </div>`
+  <img src="${this.product.thumbnail_url}" alt="Album art ${this.product.name}" />
+  <h3>${this.product.name}</h3>
+  <span class="add-to-cart" data-product-id="${this.product.id}">+</span>
+</div>`
   }
 }
 ```
@@ -147,7 +172,7 @@ Vi bör nu kunna se våra produkter på första sidan av vår webbshop.
 
 ## Koppla ihop knapparna
 
-Eftersom komponenterna skriver sin HTML först när de läggs till i dokumentet (`connectedCallback`) måste koden som kopplar `click` på lägg-till-knapparna (till exempel `instantiateCartButtons()`) köras **efter** att listan har skrivits ut i sidan. Körs den före hittar den inga knappar. Ett annat sätt är att komponenten själv kopplar sin knapp i `connectedCallback`.
+Eftersom komponenterna skriver sin HTML först när de läggs till i dokumentet (`connectedCallback`) måste koden som kopplar `click` på lägg-till-knapparna (till exempel `instantiateCartButtons()`) köras **efter** att listan har skrivits ut i sidan. Körs den före hittar den inga knappar. Ett annat sätt är att komponenten själv kopplar sin knapp i `connectedCallback`, se nästa avsnitt. Gör då bara det ena: om både `instantiateCartButtons()` och komponenten lyssnar på samma knapp läggs varje produkt till två gånger.
 
 ## Händelsehanterare som klassmetoder
 
@@ -162,9 +187,9 @@ export default class SingleProduct extends HTMLElement {
 
   connectedCallback() {
     this.innerHTML = `<div class="product">
-      <p>${this.product.name}</p>
-      <button class="add-to-cart">+</button>
-    </div>`
+  <h3>${this.product.name}</h3>
+  <span class="add-to-cart" data-product-id="${this.product.id}">+</span>
+</div>`
 
     this.querySelector(".add-to-cart").addEventListener("click", () => {
       this.addToCart()
