@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 24
       - name: Add new videos from the YouTube playlist
-        run: node scripts/add-youtube-videos.mjs
+        run: node scripts/add-youtube-videos.mjs --report "$RUNNER_TEMP/added-videos.json"
       - name: Check if anything changed
         id: changes
         run: |
@@ -49,3 +49,10 @@ jobs:
           git push
           # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the deploy explicitly.
           gh workflow run deploy.yml
+      - name: Announce the new videos in Discord
+        if: steps.changes.outputs.changed == 'true'
+        # A Discord problem should not fail a run that has already published the videos.
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: node scripts/post-to-discord.mjs "$RUNNER_TEMP/added-videos.json"

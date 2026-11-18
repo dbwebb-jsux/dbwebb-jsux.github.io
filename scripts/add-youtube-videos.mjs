@@ -6,7 +6,10 @@
 // "Läsa & titta" (kmom10: before "Projektets upplägg"). Running it again changes nothing
 // unless a new video has appeared.
 //
-// Usage: node scripts/add-youtube-videos.mjs [--feed feed.xml]
+// Usage: node scripts/add-youtube-videos.mjs [--feed feed.xml] [--report added.json]
+//
+// With --report the added videos are also written to a JSON file (with the same heading and
+// intro text that went on the page), which scripts/post-to-discord.mjs uses to announce them.
 import { readFile, writeFile } from 'node:fs/promises';
 
 const PLAYLIST_ID = 'PLVDGHjA5-1qY';
@@ -94,6 +97,7 @@ function ensureImport(text) {
 
 const videos = parseVideos(await readFeed());
 let added = 0;
+const addedVideos = [];
 for (const video of videos) {
   const file = new URL(`kmom${video.kmom}.mdx`, DOCS);
   let text;
@@ -102,5 +106,11 @@ for (const video of videos) {
   await writeFile(file, ensureImport(addVideo(text, video)));
   console.log(`kmom${video.kmom}: added ${video.type} ${video.id}`);
   added++;
+  const { heading, intro } = TYPES[video.type];
+  addedVideos.push({ id: video.id, kmom: video.kmom, type: video.type, heading, text: intro(video.who) });
 }
+
+const reportAt = process.argv.indexOf('--report');
+if (reportAt !== -1) await writeFile(process.argv[reportAt + 1], JSON.stringify(addedVideos, null, 2));
+
 console.log(added ? `${added} video(s) added` : 'No new videos');
